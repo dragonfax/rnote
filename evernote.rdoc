@@ -1,0 +1,5 @@
+= evernote
+
+Generate this with
+    evernote rdoc
+After you have described your command line interface
