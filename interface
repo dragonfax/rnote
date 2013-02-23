@@ -46,6 +46,8 @@ describe "edit (note)"
 
 	with --format
 
+	with --watch
+
 describe "create note"
 
 	with template
@@ -62,6 +64,8 @@ describe "create note"
 		otherwise launches editor
 
 	with --format
+
+	with --watch
 
 describe "create notebook"
 

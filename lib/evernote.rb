@@ -1,4 +1,12 @@
 require 'evernote/version.rb'
 
-# Add requires for other files you add to your project here, so
-# you just need to require this one file in your bin file
+# verbs
+require 'evernote/list'
+require 'evernote/show'
+require 'evernote/edit'
+require 'evernote/create'
+require 'evernote/remove'
+require 'evernote/rename'
+require 'evernote/login'
+require 'evernote/logout'
+
