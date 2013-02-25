@@ -1,15 +1,24 @@
 
-require 'minitest/autorun'
 
-describe "login"
 
-	--username --password
-	or it will ask
+describe "create note"
 
-	auto logs out
+	with template
+		notebook:
+		title:
+		tags:
 
-describe "logout"
+	with --title
+	with --content
+	with --notebook
+	with --tags
 
+	with --create-only or --no-editor
+		otherwise launches editor
+
+	with --format
+
+	with --watch
 
 describe "show (note)"
 
@@ -48,29 +57,6 @@ describe "edit (note)"
 
 	with --watch
 
-describe "create note"
-
-	with template
-		notebook:
-		title:
-		tags:
-
-	with --title
-	with --content
-	with --notebook
-	with --tags
-
-	with --create-only or --no-editor
-		otherwise launches editor
-
-	with --format
-
-	with --watch
-
-describe "create notebook"
-
-	with --notebook
-
 describe "remove note"
 
 	with --note and single result
@@ -80,14 +66,6 @@ describe "remove note"
 	after a find.
 
 	asks for confirmation
-
-describe "remove notebook"
-
-	with --notebook and single result
-
-	with intermeidate stage
-
-	no find
 
 describe "remove tag"
 
@@ -104,19 +82,9 @@ describe "list notes"
 	with --title or --note
 
 
-describe "list notebooks"
-
-	simple
-
 describe "list tags"
 
 	simple
-
-describe "rename notebook"
-
-	with --notebook
-
-	no intermediate or find
 
 describe "rename tag"
 

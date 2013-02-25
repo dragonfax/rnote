@@ -6,3 +6,6 @@ Feature: My bootstrapped app kinda works
   Scenario: App just runs
     When I get help for "evernote"
     Then the exit status should be 0
+
+
+
