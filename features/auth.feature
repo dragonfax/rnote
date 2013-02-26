@@ -4,36 +4,34 @@ Feature: Authentication
   Scenario: Login, with options
     Given I am logged out
     # note this is a bad cucumber practice, see features/README.md
-    When I run "evernote login --user #{username} --password #{password}" with variables
-      |username|
-      |password|
-    Then I am logged in
+    When I run "evernote login --user dragonfax --password #{password}" with password
+    Then I should be logged in as "dragonfax"
 
   Scenario: Login, interactively
     Given I am logged out
-    When I run "evernote login"
-    And I type the username
+    When I run "evernote login" interactively
+    And I type "dragonfax"
     And I type the password
-    Then I am logged in
+    Then I should be logged in as "dragonfax"
 
   Scenario: Who
-    Given I am logged in
+    Given I am logged in as dragonfax
     When I run "evernote who"
-    Then the output should contain the username
+    Then the output should contain "dragonfax"
 
   Scenario: Double Login
-    Given I am logged in as user1
-    When I login as user2
-    Then I am logged in as user2
-    And I am not logged in as user1
+    Given I am logged in as dragonfax
+    When I run "evernote login --user user2 --password #{password}" with password
+    Then I should be logged in as "user2"
+    And I should not be logged in as "dragonfax"
 
   Scenario: Logout
-    Given I am logged in
+    Given I am logged in as dragonfax
     When I run "evernote logout"
-    Then I am not logged in
+    Then I should not be logged in
 
   Scenario: Double Logout
     Given I am logged out
     When I run "evernote logout"
-    Then I am not logged in
+    Then I should not be logged in
 
