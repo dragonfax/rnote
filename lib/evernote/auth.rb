@@ -4,7 +4,7 @@ require 'mechanize'
 require 'evernote/secrets'
 
 SANDBOX = true
-DUMMY_CALLBACK_URL = 'https://home.jason-stillwell.com'
+DUMMY_CALLBACK_URL = 'http://www.evernote.com'
 
 module EvernoteCLI
 
@@ -19,10 +19,10 @@ module EvernoteCLI
       )
 
       request_token = client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)
-      puts "\n#{request_token.authorize_url}\n"
 
-=begin
       oauth_verifier = mechanize_login(request_token.authorize_url, username, password)
+
+      raise unless oauth_verifier
 
       access_token = request_token.get_access_token(oauth_verifier: oauth_verifier)
 
@@ -30,7 +30,15 @@ module EvernoteCLI
 
       persist_username(username)
       persist_token(token)
-=end
+
+      client2 = EvernoteOAuth::Client.new(token: token)
+      note_store = client2.note_store
+      notebooks = note_store.listNotebooks(token)
+
+      puts "\n",notebooks[0].name,"\n"
+
+
+
 
     end
 
@@ -44,25 +52,20 @@ module EvernoteCLI
 
     def mechanize_login(url, username, password)
 
-=begin
-      mech = Mechanize.new
 
-      mech.get(url) do |login_page|
+      agent = Mechanize.new
+      page = agent.get(url)
+      form = page.form('login_form')
+      form.username = username
+      form.password = password
+      page2 = agent.submit(form,form.buttons.first)
+      form2 = page2.form('oauth_authorize_form')
+      agent.redirect_ok = false
+      page3 = agent.submit(form2, form2.buttons.first)
+      response_url = page3.response['location']
+      oauth_verifier = CGI.parse(URI.parse(response_url).query)['oauth_verifier'][0]
 
-        fill in username
-        fill in password
-        approve_page = click signin
-
-        redirect = approve_page.click approve
-
-        redirect.find oauth_verifier in redirect history
-
-        oauth_verifier
-
-      end
-
-=end
-
+      oauth_verifier
     end
 
   end
