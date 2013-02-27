@@ -9,6 +9,7 @@ require 'evernote/cmd/remove'
 require 'evernote/cmd/rename'
 require 'evernote/cmd/login'
 require 'evernote/cmd/logout'
+require 'evernote/cmd/who'
 
 # internal modules
 require 'evernote/auth'

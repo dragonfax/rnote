@@ -1,8 +1,11 @@
-desc 'Describe logout here'
-arg_name 'Describe arguments to logout here'
+desc 'log user out of evernote'
 command :logout do |c|
   c.action do |global_options,options,args|
-    puts "logout command ran"
+    raise unless args.length == 0
+
+    auth = EvernoteCLI::Auth.new(EvernoteCLI::Persister.new)
+    auth.logout
+
   end
 end
 

@@ -11,7 +11,7 @@ Feature: Notebooks
     When I run "evernote create notebook 'test1'"
     Then I have a notebook named "test1"
 
-  # TODO can also use --notebook option to name the notebook
+    # TODO use --notebook option to name the notebook
 
   Scenario: Remove Notebook, with unambiguous name
     Given I have a notebook named "test1"
@@ -20,7 +20,7 @@ Feature: Notebooks
     Then I have 1 notebooks
     And I do not have a notebook named "test1"
 
-  # TODO cn use --notebook
+    # TODO use --notebook
 
   Scenario: Remove Notebook, with ambiguous name
     Given I have a notebook named "test11"
@@ -40,10 +40,9 @@ Feature: Notebooks
     Then I do not have a notebook named "test1"
     And I have a notebook named "test2"
 
-
-  # TODO ambiguous name, intermediate stage
-  # TOOD with --notebook option
-  # TODO with "to" keyword
+    # TODO with ambiguous name and intermediate selection stage
+    # TOOD with --notebook option
+    # TODO with "to" keyword
 
   Scenario: List Notebooks
     Given I have 3 notebooks
