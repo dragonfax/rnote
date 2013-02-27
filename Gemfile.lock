@@ -5,6 +5,7 @@ PATH
       evernote-thrift
       evernote_oauth
       gli (= 2.5.4)
+      mechanize
 
 GEM
   remote: https://rubygems.org/
@@ -31,6 +32,9 @@ GEM
       json (>= 1.7.6)
     gli (2.5.4)
     json (1.7.7)
+    mechanize (1.0.0)
+      nokogiri (>= 1.2.1)
+    nokogiri (1.5.6)
     oauth (0.4.7)
     rake (10.0.3)
     rdoc (3.12.1)

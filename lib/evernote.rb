@@ -1,12 +1,14 @@
 require 'evernote/version.rb'
 
 # verbs
-require 'evernote/list'
-require 'evernote/show'
-require 'evernote/edit'
-require 'evernote/create'
-require 'evernote/remove'
-require 'evernote/rename'
-require 'evernote/login'
-require 'evernote/logout'
+require 'evernote/cmd/list'
+require 'evernote/cmd/show'
+require 'evernote/cmd/edit'
+require 'evernote/cmd/create'
+require 'evernote/cmd/remove'
+require 'evernote/cmd/rename'
+require 'evernote/cmd/login'
+require 'evernote/cmd/logout'
 
+# internal modules
+require 'evernote/auth'
