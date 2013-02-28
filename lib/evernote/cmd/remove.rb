@@ -1,3 +1,4 @@
+include GLI::App
 desc 'Describe remove here'
 arg_name 'Describe arguments to remove here'
 command :remove do |c|

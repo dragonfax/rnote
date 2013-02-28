@@ -76,6 +76,12 @@ module EvernoteCLI
       end
     end
 
+    def save_last_search(last_search)
+      modify_config do |config|
+        config['last_search'] = last_search
+      end
+    end
+
   end
 
   class Auth
@@ -116,8 +122,14 @@ module EvernoteCLI
     def client
       # not the same as the client used to get the token.
       # this one is fully authorized and can make actual api calls.
-      client = EvernoteOAuth::Client.new(token: @persister.get_token)
-      client
+
+      if not is_logged_in
+        raise "not logged in"
+      end
+
+      @client ||= EvernoteOAuth::Client.new(token: @persister.get_token)
+
+      @client
     end
 
     def mechanize_login(url, username, password)

@@ -5,6 +5,7 @@ PATH
       evernote-thrift
       evernote_oauth
       gli (= 2.5.4)
+      libxml-ruby
       mechanize
 
 GEM
@@ -34,6 +35,7 @@ GEM
       json (>= 1.7.6)
     gli (2.5.4)
     json (1.7.7)
+    libxml-ruby (2.6.0)
     mechanize (2.5.1)
       domain_name (~> 0.5, >= 0.5.1)
       mime-types (~> 1.17, >= 1.17.2)

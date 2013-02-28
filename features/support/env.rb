@@ -1,5 +1,6 @@
 require 'aruba/cucumber'
 require_relative '../../test/integration/secrets'
+require 'evernote/auth'
 
 ENV['PATH'] = "#{File.expand_path(File.dirname(__FILE__) + '/../../bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
 LIB_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'..','..','lib')
@@ -17,16 +18,36 @@ After do
   ENV['RUBYLIB'] = @original_rubylib
 end
 
-module Secrets
+module EvernoteCLI
 
-  def username
-    SANDBOX_USERNAME
+  module Secrets
+
+    def username
+      SANDBOX_USERNAME
+    end
+
+    def password
+      SANDBOX_PASSWORD
+    end
+
   end
 
-  def password
-    SANDBOX_PASSWORD
+  class ApiHelper
+
+    def initialize
+      @auth = EvernoteCLI::Auth.new(EvernoteCLI::Persister.new)
+    end
+
+    def client
+      @auth.client
+    end
+
   end
 
 end
 
-World(Secrets)
+World(EvernoteCLI::Secrets)
+
+World do
+  EvernoteCLI::ApiHelper.new
+end

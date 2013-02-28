@@ -1,15 +1,10 @@
+
 require 'evernote/version.rb'
 
 # verbs
-require 'evernote/cmd/list'
-require 'evernote/cmd/show'
-require 'evernote/cmd/edit'
-require 'evernote/cmd/create'
-require 'evernote/cmd/remove'
-require 'evernote/cmd/rename'
-require 'evernote/cmd/login'
-require 'evernote/cmd/logout'
-require 'evernote/cmd/who'
+Dir[File.absolute_path(File.dirname(__FILE__)) + '/evernote/cmd/*.rb'].each do |file|
+ require file
+end
 
 # internal modules
 require 'evernote/auth'

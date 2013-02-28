@@ -1,3 +1,4 @@
+include GLI::App
 desc 'Describe rename here'
 arg_name 'Describe arguments to rename here'
 command :rename do |c|

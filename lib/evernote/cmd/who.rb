@@ -1,3 +1,4 @@
+include GLI::App
 desc 'see which user you are logged in as'
 command :who do |c|
   c.action do |global_options,options,args|
