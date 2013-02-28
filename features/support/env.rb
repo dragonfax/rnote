@@ -1,6 +1,6 @@
 require 'aruba/cucumber'
 require_relative '../../test/integration/secrets'
-require 'evernote/auth'
+require 'evernote'
 
 ENV['PATH'] = "#{File.expand_path(File.dirname(__FILE__) + '/../../bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
 LIB_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'..','..','lib')

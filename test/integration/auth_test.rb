@@ -1,7 +1,7 @@
 
 require_relative './secrets'
 
-require 'evernote/auth'
+require 'evernote'
 require 'minitest/autorun'
 
 module EvernoteCLI
