@@ -1,4 +1,6 @@
 
+require 'gli'
+
 include GLI::App
 
 desc 'create a note and launch the editor for it'

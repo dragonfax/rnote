@@ -1,4 +1,12 @@
 
+
+# external modules
+require 'evernote_oauth'
+require 'mechanize'
+require 'yaml'
+
+# internal modules
+require 'evernote/secrets'
 require 'evernote/version.rb'
 
 # verbs
@@ -6,13 +14,6 @@ Dir[File.absolute_path(File.dirname(__FILE__)) + '/evernote/cmd/*.rb'].each do |
  require file
 end
 
-# internal modules
-require 'evernote'
-
-require 'evernote_oauth'
-require 'mechanize'
-require 'evernote/secrets'
-require 'yaml'
 
 SANDBOX = true
 DUMMY_CALLBACK_URL = 'http://www.evernote.com'
@@ -178,6 +179,54 @@ module EvernoteCLI
       # TODO perhaps I can redo the oauth, and choose revoke instead of re-accept
       @persister.forget_token
       @persister.forget_username
+    end
+
+  end
+
+  class Converter
+
+    def enml_to_raw_markdown(enml)
+      m = enml.match %r{<pre>(.*)</pre>}m
+      raise unless m
+      m[1]
+    end
+
+    def raw_markdown_to_enml(markdown)
+      <<-EOF
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note>
+<pre>#{markdown}</pre>
+</en-note>
+EOF
+    end
+
+    # The yaml stream is what we give to the user to edit in their editor
+    #
+    # Yaml stream is a yaml document with the note details as a hash.
+    # followed by the note content as markdown
+    def yaml_stream_to_attributes(yaml_stream)
+
+      m = yaml_stream.match /^(---.+?---\n)(.*)$/m
+      raise "failed to match input\n#{yaml_stream}" unless m
+
+      attributes_doc = m[1] || raise
+      markdown = m[2]
+
+      attributes = YAML.load(attributes_doc)
+      enml = raw_markdown_to_enml(markdown)
+
+      attributes[:content] = enml
+
+      attributes
+    end
+
+    def attributes_to_yaml_stream(attributes)
+
+      enml = attributes[:content]
+      attributes.delete(:content)
+
+      YAML.dump(attributes) + "\n---\n" + enml_to_raw_markdown(enml)
     end
 
   end
