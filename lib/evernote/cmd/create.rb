@@ -15,8 +15,26 @@ command :create do |verb|
     noun.action do |global_options,options,args|
 
       client = EvernoteCLI::Auth.new( persister = EvernoteCLI::Persister.new ).client
+      converter = EvernoteCLI::Converter.new
 
-      content = ''
+      yaml_stream = nil
+
+      begin
+
+        # create the yaml stream
+        # Note: in this command it just creates an empty yaml_stream, but the format is important.
+        note_attributes = {
+          :content => converter.raw_markdown_to_enml(''), # empty enml document
+          :title => ''
+        }
+        if options[:title]
+          note_attributes[:title] = options[:title]
+        end
+        yaml_stream = converter.attributes_to_yaml_stream(note_attributes)
+
+      end
+
+      ## using an Editor for note content
 
       if options[:edit]
 
@@ -26,60 +44,39 @@ command :create do |verb|
 
         file = Tempfile.new(['evernote','txt'])
         begin
-          # content = client.note_store.get_note(notes.first.guid,true,false,false,false)
-          # f.write(content)
+
+          # fill the tempfile with the yaml stream
+          file.write(yaml_stream)
           file.close()
 
           system(ENV['EDITOR'],file.path)
-
           # wait for the editor
 
-          content = File.open(file.path,'r').read
+          # read the yaml stream from the temp file.
+          # Note: can't reopen a file in ruby.
+          yaml_stream = File.open(file.path,'r').read
         ensure
           file.unlink
         end
       end
 
-      enml = <<EOF
-<?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note>
-<pre>#{content}</pre>
-</en-note>
-EOF
-
-      # verify_valid_enml(enml)
-
-      note = Evernote::EDAM::Type::Note.new
-      note.title = options[:title]
-      note.content = enml
       begin
-        client.note_store.createNote(note)
-      rescue Evernote::EDAM::Error::EDAMUserException => e
-        raise e.parameter
-      end
 
+        # read/parse the yaml stream
+        attributes = converter.yaml_stream_to_attributes(yaml_stream)
+
+        # create the new note
+        note = Evernote::EDAM::Type::Note.new
+        note.title = attributes[:title]
+        note.content = attributes[:content]
+        begin
+          client.note_store.createNote(note)
+        rescue Evernote::EDAM::Error::EDAMUserException => e
+          raise e.parameter
+        end
+
+      end
 
     end
   end
 end
-
-require 'libxml'
-
-include LibXML
-
-ENML_DTD_FILE = File.dirname(__FILE__) + '/../enml2.dtd'
-raise unless File.exists?(ENML_DTD_FILE)
-
-def verify_valid_enml(content)
-
-  puts "validating enml"
-
-  dtd = XML::Dtd.new(File.read(ENML_DTD_FILE))
-  doc = XML::Document.string(content)
-  doc.validate(dtd)
-
-  puts "completed validating enml"
-
-end
-

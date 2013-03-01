@@ -187,7 +187,7 @@ module EvernoteCLI
 
     def enml_to_raw_markdown(enml)
       m = enml.match %r{<pre>(.*)</pre>}m
-      raise unless m
+      raise 'couldnt pull markdown out of enml' unless m
       m[1]
     end
 
