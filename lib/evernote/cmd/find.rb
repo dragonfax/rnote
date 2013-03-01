@@ -3,22 +3,30 @@ include GLI::App
 
 desc 'search for notes/tags/notebooks'
 arg_name :noun
-command :find do |c|
+command :find do |verb|
 
-  c.desc "title to search for"
-  c.flag :title
+  verb.command :note do |noun|
 
-  c.action do |global_options,options,args|
+    noun.desc "phrase must be in note's title"
+    noun.flag :title
 
-    if args[0] == 'note'
+    noun.action do |global_options,options,args|
 
       filter = Evernote::EDAM::NoteStore::NoteFilter.new
+      filter.order = Evernote::EDAM::Type::NoteSortOrder::UPDATED
+      words = []
+      if not args.empty?
+        words += args
+      end
       if options[:title]
-        filter.words = "intitle:\"#{options[:title]}\""
+        words << " intitle:\"#{options[:title]}\""
+      end
+      if not words.empty?
+        filter.words = words.join(' ') # TODO join phrases using quotes and quote escaping
       end
       persister = EvernoteCLI::Persister.new
       client = EvernoteCLI::Auth.new(persister).client
-      notes = client.note_store.findNotes(filter,0,1).notes
+      notes = client.note_store.findNotes(filter,0,20).notes
 
       #TODO use note metadata instead of notes themselves
 
@@ -36,10 +44,7 @@ command :find do |c|
         persister.save_last_search(last_search)
       end
 
-    else
-      raise "unimplemented"
     end
-
   end
 end
 
