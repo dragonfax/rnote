@@ -4,6 +4,8 @@
 require 'evernote_oauth'
 require 'mechanize'
 require 'yaml'
+#require 'xml'
+require 'nokogiri'
 
 # internal modules
 require 'evernote/secrets'
@@ -90,6 +92,12 @@ module EvernoteCLI
     def save_last_search(last_search)
       modify_config do |config|
         config['last_search'] = last_search
+      end
+    end
+
+    def get_last_search
+      read_config do |config|
+        config['last_search'] || []
       end
     end
 
@@ -183,12 +191,18 @@ module EvernoteCLI
 
   end
 
+
   class Converter
 
     def enml_to_raw_markdown(enml)
-      m = enml.match %r{<pre>(.*)</pre>}m
-      raise 'couldnt pull markdown out of enml' unless m
-      m[1]
+      #document = XML::Document.string(enml) # , :options => XML::Parser::Options::DTDLOAD)
+      document =  Nokogiri::XML::Document.parse(enml)
+      pre_node = document.root.xpath('pre').first
+      if pre_node
+        pre_node.children.to_ary.select { |child| child.text? }.map { |child| child.to_s }.join('')
+      else
+        document.root.xpath("//text()").text
+      end
     end
 
     def raw_markdown_to_enml(markdown)

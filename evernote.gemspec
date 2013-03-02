@@ -27,6 +27,7 @@ lib/evernote.rb
 	s.add_runtime_dependency('evernote-thrift')
 	s.add_runtime_dependency('evernote_oauth')
   s.add_runtime_dependency('mechanize')
-  s.add_runtime_dependency('libxml-ruby')
+  s.add_runtime_dependency('nokogiri')
+
 
 end

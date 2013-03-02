@@ -31,10 +31,26 @@ post do |global,command,options,args|
   # block on that command only
 end
 
+def error_code_to_name(error_code)
+  Evernote::EDAM::Error::EDAMErrorCode.constants.select { |constant| Evernote::EDAM::Error::EDAMErrorCode.const_get(constant) == error_code }.first.to_s
+end
+
 on_error do |exception|
   # Error logic here
   # return false to skip default error handling
-  true
+
+  if exception.class == Evernote::EDAM::Error::EDAMUserException
+    if exception.errorCode == Evernote::EDAM::Error::EDAMErrorCode::AUTH_EXPIRED
+      puts "Authorization issue. perhaps your password is incorrect or expired."
+      false
+    else
+      puts "error: code #{error_code_to_name(exception.errorCode)} parameter #{exception.parameter}"
+      true
+    end
+  else
+    true
+  end
+
 end
 
 exit run(ARGV)
