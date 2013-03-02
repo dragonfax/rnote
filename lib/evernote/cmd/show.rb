@@ -1,5 +1,8 @@
 
+require 'evernote/find'
+
 include GLI::App
+
 
 desc 'output notes to the console'
 command :show do |verb|
@@ -7,29 +10,14 @@ command :show do |verb|
   verb.desc 'find and output notes to the console'
   verb.command :note do |noun|
 
-    noun.flag :title
+    EvernoteCLI::Find.include_search_options(noun)
 
     noun.action do |global_options,options,args|
 
-      filter = Evernote::EDAM::NoteStore::NoteFilter.new
-      if options[:title]
-        filter.words = "intitle:\"#{options[:title]}\""
-      end
-      persister = EvernoteCLI::Persister.new
-      client = EvernoteCLI::Auth.new(persister).client
-      notes = client.note_store.findNotes(filter,0,1).notes
-
-      #TODO use note metadata instead of notes themselves
-
-      if notes.empty?
-        puts "no notes found"
-        exit
-      elsif notes.size == 1
-        puts client.note_store.getNote(notes.first.guid,true,false,false,false).content
-      else
-        raise "unimplemented"
-      end
-
+      find = EvernoteCLI::Find.new(app.auth,app.persister)
+      note = find.find_note(options,args)
+      content = app.client.note_store.getNoteContent(note.guid)
+      puts content
 
     end
 

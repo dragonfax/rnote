@@ -18,9 +18,8 @@ command :login do |c|
       options[:p] = STDIN.gets.chomp
     end
 
-    auth = EvernoteCLI::Auth.new(EvernoteCLI::Persister.new)
-    auth.login(options[:u],options[:p])
-    puts "you are now logged in as '#{auth.who}'"
+    $app.auth.login(options[:u],options[:p])
+    puts "you are now logged in as '#{$app.auth.who}'"
 
   end
 end
