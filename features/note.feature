@@ -7,7 +7,7 @@ Feature:
     And I have 0 notes
     
   Scenario: Show note
-    Given that I have a note named "foo" with content "bar"
+    Given that I have 1 note named "foo" with content "bar"
     When I run `rnote show note --title "foo"`
     Then the output should contain "bar"
     
