@@ -4,6 +4,7 @@ require 'yaml'
 RNOTE_DIR = ENV['HOME'] + '/.rnote'
 AUTH_FILE = RNOTE_DIR + '/auth'
 SEARCH_FILE = RNOTE_DIR + '/search_cache'
+SETTINGS_FILE = RNOTE_DIR + '/rnoterc'
 
 =begin
 
@@ -26,6 +27,8 @@ module Rnote
   module ConfigFile
     
     def modify_config
+      
+      raise if self.methods.include?(:readonly) and readonly
       
       # TODO lock the file through this process
 
@@ -157,11 +160,31 @@ EOF
     
   end
   
+  class Settings 
+    include ConfigFile
+    
+    def initialize
+      @config_file = SETTINGS_FILE
+    end
+    
+    def readonly
+      true
+    end
+     
+    def developer_token
+      read_config do |config|
+        config['developer_token']
+      end
+    end
+    
+  end
+  
   class Persister
     
     def initialize()
       @auth_cache = AuthCache.new
       @search_cache = SearchCache.new
+      @settings = Settings.new
     end
     
     def persist_username(*args)
@@ -181,7 +204,11 @@ EOF
     end
     
     def get_token
-      @auth_cache.get_token
+      if @settings.developer_token
+        @settings.developer_token
+      else
+        @auth_cache.get_token
+      end
     end
     
     def get_username
