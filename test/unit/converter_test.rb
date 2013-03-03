@@ -95,7 +95,7 @@ EOF
 
   end
 
-  describe NoteAttributes do
+  describe Evernote::EDAM::Type::Note do
 
     it 'passes through simple yaml_stream, with no markup' do
       yaml_stream = <<EOF
@@ -106,10 +106,10 @@ guid:
 ---
 simple text
 EOF
-      assert_equal yaml_stream, NoteAttributes.from_yaml_stream(yaml_stream).to_yaml_stream
+      assert_equal yaml_stream, Evernote::EDAM::Type::Note.from_yaml_stream(yaml_stream).to_yaml_stream
     end
 
-    it 'passes through simple NoteAttributes, with no markup' do
+    it 'passes through simple Note, with no markup' do
 
       enml = <<EOF
 <?xml version='1.0' encoding='utf-8'?>
@@ -117,9 +117,12 @@ EOF
 <en-note><pre>simple text</pre></en-note>
 EOF
 
-      note_attributes = NoteAttributes.from_yaml_stream(NoteAttributes.new(nil,nil,enml).to_yaml_stream)
+      note = Evernote::EDAM::Type::Note..new
+      note.content = enml
       
-      assert note_attributes.enml.include?('simple text')
+      note2 = Evernote::EDAM::Type::Note.from_yaml_stream(Evernote::EDAM::Type::Note..new(nil,nil,enml).to_yaml_stream)
+      
+      assert note2.enml.include?('simple text')
     end
 
   end

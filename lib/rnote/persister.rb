@@ -69,15 +69,28 @@ module Rnote
       end
     end
 
-    def save_last_search(last_search)
+    def save_last_search(notes)
       modify_config do |config|
-        config['last_search'] = last_search
+        config['last_search'] = notes.map do |note|
+          # convert the note to something more serializable.
+          # tags = @auth.client.note_store.getNoteTagNames(note.guid)
+          # brief = Rnote.enml_to_markdown(@auth.client.note_store.getNoteContent(note.guid))[0..30]
+          { title: note.title, guid: note.guid, tagNames: note.tagNames }
+        end
       end
     end
-
+    
     def get_last_search
       read_config do |config|
         config['last_search'] || []
+      end.map do |note_hash|
+        note = Evernote::EDAM::Type::Note.new
+        note.title = note_hash[:title]
+        note.guid = note_hash[:guid]
+        note.tagNames = note_hash[:tagNames]
+        note.cached = true
+        
+        note
       end
     end
 

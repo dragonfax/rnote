@@ -43,6 +43,8 @@ on_error do |exception|
       puts "error: code #{error_code_to_name(exception.errorCode)} parameter #{exception.parameter}"
       true
     end
+  elsif exception.class == Rnote::InvalidXmlError
+    puts exception.xml
   else
     true
   end

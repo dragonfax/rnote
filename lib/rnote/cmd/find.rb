@@ -15,7 +15,7 @@ command :find do |verb|
     Rnote::Find.include_search_options(noun)
 
     noun.action do |global_options,options,args|
-
+      
       find = Rnote::Find.new($app.auth,$app.persister)
 
       if options[:cached]
@@ -26,7 +26,7 @@ command :find do |verb|
 
       else
 
-        find.find_cmd(options,args)
+        find.find_cmd(options.merge(global_options),args)
 
       end
 

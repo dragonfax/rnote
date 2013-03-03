@@ -12,6 +12,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    ansi (1.4.3)
     aruba (0.5.1)
       childprocess (~> 0.3.6)
       cucumber (>= 1.1.1)
@@ -35,6 +36,7 @@ GEM
     gherkin (2.11.6)
       json (>= 1.7.6)
     gli (2.5.4)
+    hashie (2.0.2)
     highline (1.6.15)
     json (1.7.7)
     mechanize (2.5.1)
@@ -46,11 +48,20 @@ GEM
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (~> 0.0, >= 0.0.9)
     mime-types (1.21)
+    minitest (4.6.2)
+    minitest-reporters (0.14.7)
+      ansi
+      builder
+      minitest (>= 2.12, < 5.0)
+      powerbar
     net-http-digest_auth (1.2.1)
     net-http-persistent (2.8)
     nokogiri (1.5.6)
     ntlm-http (0.1.1)
     oauth (0.4.7)
+    powerbar (1.0.11)
+      ansi (~> 1.4.0)
+      hashie (>= 1.1.0)
     rake (10.0.3)
     rdoc (3.12.1)
       json (~> 1.4)
@@ -66,6 +77,7 @@ PLATFORMS
 
 DEPENDENCIES
   aruba
+  minitest-reporters
   rake
   rdoc
   rnote!
