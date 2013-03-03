@@ -4,7 +4,6 @@ require 'evernote_oauth'
 require 'rnote/secrets'
 require 'rnote/persister'
 
-SANDBOX = true
 DUMMY_CALLBACK_URL = 'http://www.evernote.com'
 
 module Rnote
@@ -31,7 +30,7 @@ module Rnote
       client = EvernoteOAuth::Client.new(
           consumer_key: CONSUMER_KEY,
           consumer_secret: CONSUMER_SECRET,
-          sandbox: SANDBOX
+          sandbox: @persister.sandbox
       )
 
       request_token = client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)

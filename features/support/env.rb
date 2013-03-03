@@ -39,7 +39,9 @@ module Rnote
     include MiniTest::Assertions
 
     def initialize
-      @auth = Rnote::Auth.new(Rnote::Persister.new)
+      @persister = Rnote::Persister.new
+      raise unless @persister.sandbox
+      @auth = Rnote::Auth.new(@persister)
     end
 
     def client

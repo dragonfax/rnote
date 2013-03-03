@@ -177,6 +177,17 @@ EOF
       end
     end
     
+    def sandbox
+      read_config do |config|
+        if config['sandbox'].nil?
+          # default to true, just incase
+          false
+        else
+          config['sandbox']
+        end
+      end
+    end
+    
   end
   
   class Persister
