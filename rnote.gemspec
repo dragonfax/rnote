@@ -16,7 +16,7 @@ lib/rnote.rb
   s.require_paths << 'lib'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc','rnote.rdoc']
-  s.rdoc_options << '--title' << 'evernote' << '--main' << 'README.rdoc' << '-ri'
+  s.rdoc_options << '--title' << 'rnote' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
   s.executables << 'rnote'
   s.add_development_dependency('rake')

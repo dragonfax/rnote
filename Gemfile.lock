@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    evernote (0.0.1)
+    rnote (0.0.1)
       evernote-thrift
       evernote_oauth
       gli (= 2.5.4)
@@ -66,6 +66,6 @@ PLATFORMS
 
 DEPENDENCIES
   aruba
-  evernote!
   rake
   rdoc
+  rnote!
