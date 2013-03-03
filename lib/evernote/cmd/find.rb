@@ -1,5 +1,5 @@
 
-require 'evernote/find'
+require 'rnote/find'
 
 include GLI::App
 
@@ -12,11 +12,11 @@ command :find do |verb|
     noun.desc "don't hit the api, just show the last search results"
     noun.switch :cached
 
-    EvernoteCLI::Find.include_search_options(noun)
+    Rnote::Find.include_search_options(noun)
 
     noun.action do |global_options,options,args|
 
-      find = EvernoteCLI::Find.new($app.auth,$app.persister)
+      find = Rnote::Find.new($app.auth,$app.persister)
 
       if options[:cached]
 

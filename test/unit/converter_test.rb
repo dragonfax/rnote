@@ -1,8 +1,8 @@
 
 require 'minitest/autorun'
-require 'evernote'
+require 'rnote'
 
-module EvernoteCLI
+module Rnote
 
   describe Converter do
     before do

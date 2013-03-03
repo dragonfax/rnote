@@ -2,7 +2,7 @@
 require 'highline'
 require 'nokogiri'
 
-module EvernoteCLI
+module Rnote
 
 class Edit
 
@@ -90,7 +90,7 @@ class Edit
 
     yaml_stream = @converter.attributes_to_yaml_stream(note_attributes)
 
-    file = Tempfile.new(['evernote','txt'])
+    file = Tempfile.new(['rnote','txt'])
     begin
 
       # fill the tempfile with the yaml stream

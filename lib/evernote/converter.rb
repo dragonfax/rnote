@@ -2,7 +2,7 @@
 require 'nokogiri'
 require 'yaml'
 
-module EvernoteCLI
+module Rnote
 
   class Converter
 

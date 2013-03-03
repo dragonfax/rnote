@@ -3,12 +3,12 @@
 ## Given
 
 Given /^I am logged in as dragonfax$/ do
-  step 'I run `evernote login --user=dragonfax --password=<password>` with password'
+  step 'I run `rnote login --user=dragonfax --password=<password>` with password'
   step 'I should be logged in as "dragonfax"'
 end
 
 Given /^I am logged out$/ do
-  step 'I run `evernote logout`'
+  step 'I run `rnote logout`'
   step "I should not be logged in"
 end
 
@@ -26,17 +26,17 @@ end
 ## Then
 
 Then /^I should not be logged in$/ do
-  step 'I run `evernote who`'
+  step 'I run `rnote who`'
   step 'the output should contain "You are not logged in as any user."'
 end
 
 Then /^I should be logged in as "(.+)"$/ do |arg1|
-  step 'I run `evernote who`'
+  step 'I run `rnote who`'
   step "the output should contain \"#{arg1}\""
 end
 
 Then /^I should not be logged in as "(.+)"$/ do |arg1|
-  step 'I run `evernote who`'
+  step 'I run `rnote who`'
   step "the output should not contain \"#{arg1}\""
 end
 

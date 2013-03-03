@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 require 'gli'
-require 'evernote'
+require 'rnote'
 
 include GLI::App
 
 program_desc 'Evernote Command Line'
 
-version Evernote::VERSION
+version Rnote::VERSION
 
 desc 'prompt for input and run an editor when necessary'
 default_value true
@@ -49,6 +49,6 @@ on_error do |exception|
 
 end
 
-$app = EvernoteCLI::App.new
+$app = Rnote::App.new
 
 exit run(ARGV)

@@ -1,13 +1,13 @@
 
 require 'mechanize'
 require 'evernote_oauth'
-require 'evernote/secrets'
-require 'evernote/persister'
+require 'rnote/secrets'
+require 'rnote/persister'
 
 SANDBOX = true
 DUMMY_CALLBACK_URL = 'http://www.evernote.com'
 
-module EvernoteCLI
+module Rnote
 
   class Auth
 

@@ -14,7 +14,7 @@ Given /^that I don't have a note named "(.*?)"$/ do |arg1|
   end
 
   # verify
-  step "I run `evernote find note --title '#{arg1}'`"
+  step "I run `rnote find note --title '#{arg1}'`"
   step "the output should contain \"no notes found\""
 
 end
@@ -40,6 +40,6 @@ When /^I exit the editor$/ do
 end
 
 Then /^the note named "(.*?)" should contain "(.*?)"$/ do |arg1, arg2|
-  step "I run `evernote show note --title \"#{arg1}\"`"
+  step "I run `rnote show note --title \"#{arg1}\"`"
   step "the output should contain \"#{arg2}\""
 end

@@ -1,4 +1,4 @@
-= evernote
+= rnote
 
 command line interface to evernote.
 designed for use as a user interface, not as a programmatical interface.
@@ -22,5 +22,5 @@ settings directory
         default format
 
 
-:include:evernote.rdoc
+:include:rnote.rdoc
 

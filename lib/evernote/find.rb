@@ -1,9 +1,9 @@
 
 require 'highline'
 require 'evernote-thrift'
-require 'evernote/converter'
+require 'rnote/converter'
 
-module EvernoteCLI
+module Rnote
 
   class Find
 

@@ -23,4 +23,4 @@ Since we're working with a command line application here, the scope of operation
 * entering a line of input here and there.
 
 So the step code shouldn't actually be using the modules in this gem directly. But instead interacting soley
-with the 'evernote' command. And doing so by referencing other step definitions.
+with the 'rnote' command. And doing so by referencing other step definitions.

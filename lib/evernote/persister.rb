@@ -3,7 +3,7 @@ require 'yaml'
 
 PERSISTENCE_FILE = ENV['HOME'] + '/.rnote_persist'
 
-module EvernoteCLI
+module Rnote
   class Persister
 
     def persist_username(username)

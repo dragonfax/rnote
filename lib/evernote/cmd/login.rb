@@ -1,7 +1,7 @@
 
 include GLI::App
 
-desc 'provide evernote credentials'
+desc 'provide rnote credentials'
 command :login do |c|
   c.flag [:u,:user,:username]
   c.flag [:p,:pass,:password]

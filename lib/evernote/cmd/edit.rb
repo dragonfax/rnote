@@ -1,6 +1,6 @@
 
-require 'evernote/edit'
-require 'evernote/find'
+require 'rnote/edit'
+require 'rnote/find'
 
 include GLI::App
 
@@ -11,14 +11,14 @@ command :edit do |verb|
 
   verb.command :note do |noun|
 
-    EvernoteCLI::Edit.include_set_options(noun)
-    EvernoteCLI::Edit.include_editor_options(noun)
-    EvernoteCLI::Find.include_search_options(noun)
+    Rnote::Edit.include_set_options(noun)
+    Rnote::Edit.include_editor_options(noun)
+    Rnote::Find.include_search_options(noun)
 
     noun.action do |global_options,options,args|
 
-      find = EvernoteCLI::Find.new(app.auth,app.persister)
-      edit = EvernoteCLI::Edit.new(app.auth)
+      find = Rnote::Find.new(app.auth,app.persister)
+      edit = Rnote::Edit.new(app.auth)
 
       note = find.find_note(options,args)
 

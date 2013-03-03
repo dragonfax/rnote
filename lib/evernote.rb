@@ -1,16 +1,16 @@
 
-require 'evernote/version'
-require 'evernote/converter'
-require 'evernote/persister'
-require 'evernote/auth'
+require 'rnote/version'
+require 'rnote/converter'
+require 'rnote/persister'
+require 'rnote/auth'
 
 # verbs
-Dir[File.absolute_path(File.dirname(__FILE__)) + '/evernote/cmd/*.rb'].each do |file|
+Dir[File.absolute_path(File.dirname(__FILE__)) + '/rnote/cmd/*.rb'].each do |file|
  require file
 end
 
 
-module EvernoteCLI
+module Rnote
 
   class App
 

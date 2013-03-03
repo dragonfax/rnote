@@ -1,7 +1,7 @@
 
 require 'gli'
 
-require 'evernote/edit'
+require 'rnote/edit'
 
 include GLI::App
 
@@ -11,8 +11,8 @@ command :create do |verb|
   verb.command :note do |noun|
 
 
-    EvernoteCLI::Edit.include_set_options(noun)
-    EvernoteCLI::Edit.include_editor_options(noun)
+    Rnote::Edit.include_set_options(noun)
+    Rnote::Edit.include_editor_options(noun)
 
     noun.action do |global_options,options,args|
 
@@ -22,7 +22,7 @@ command :create do |verb|
 
       note = Evernote::EDAM::Type::Note.new
 
-      edit = EvernoteCLI::Edit.new($app.auth)
+      edit = Rnote::Edit.new($app.auth)
       edit.edit_action(note,options)
 
 

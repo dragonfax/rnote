@@ -8,7 +8,7 @@ Feature: Notebooks
     And that I have only 1 notebook named "first notebook"
 
   Scenario: Create Notebook
-    When I run "evernote create notebook 'test1'"
+    When I run "rnote create notebook 'test1'"
     Then I have a notebook named "test1"
 
     # TODO use --notebook option to name the notebook
@@ -16,7 +16,7 @@ Feature: Notebooks
   Scenario: Remove Notebook, with unambiguous name
     Given I have a notebook named "test1"
     # meaning we now have 2 notebooks, "test1" and "first notebook"
-    When I run "evernote remove notebook 'test1'"
+    When I run "rnote remove notebook 'test1'"
     Then I have 1 notebooks
     And I do not have a notebook named "test1"
 
@@ -26,7 +26,7 @@ Feature: Notebooks
     Given I have a notebook named "test11"
     And I have a notebook named "test12"
     And I have 3 notebooks
-    When I run "evernote remove notebook 'test1'" interactively
+    When I run "rnote remove notebook 'test1'" interactively
     And I type "1"
     Then I should have 2 notebooks
     And I have a notebook named "test12"
@@ -36,7 +36,7 @@ Feature: Notebooks
   Scenario: Rename Notebook, with unambiguous name
     Given I have a notebook named "test1"
     And I do not have a notebook named "test2"
-    When I run "evernote rename notebook 'test1' 'test2'"
+    When I run "rnote rename notebook 'test1' 'test2'"
     Then I do not have a notebook named "test1"
     And I have a notebook named "test2"
 
@@ -46,7 +46,7 @@ Feature: Notebooks
 
   Scenario: List Notebooks
     Given I have 3 notebooks
-    When I run "evernote list notebook"
+    When I run "rnote list notebook"
     Then the output should contain "1:"
     And the output should contain "2:"
     And the output should contain "3:"

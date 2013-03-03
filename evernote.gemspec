@@ -1,24 +1,24 @@
 # Ensure we require the local version and not one we might have installed already
-require File.join([File.dirname(__FILE__),'lib','evernote','version.rb'])
+require File.join([File.dirname(__FILE__),'lib','rnote','version.rb'])
 spec = Gem::Specification.new do |s| 
-  s.name = 'evernote'
-  s.version = Evernote::VERSION
+  s.name = 'rnote'
+  s.version = Rnote::VERSION
   s.author = 'Jason Stillwell'
   s.email = 'dragonfax@gmail.com'
   s.homepage = 'http://github.com/dragonfax/evernote'
   s.platform = Gem::Platform::RUBY
   s.summary = 'CLI to Evernote'
   s.files = %w(
-bin/evernote
-lib/evernote/version.rb
-lib/evernote.rb
+bin/rnote
+lib/rnote/version.rb
+lib/rnote.rb
   )
   s.require_paths << 'lib'
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc','evernote.rdoc']
+  s.extra_rdoc_files = ['README.rdoc','rnote.rdoc']
   s.rdoc_options << '--title' << 'evernote' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
-  s.executables << 'evernote'
+  s.executables << 'rnote'
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')

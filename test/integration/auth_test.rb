@@ -1,10 +1,10 @@
 
 require_relative './secrets'
 
-require 'evernote'
+require 'rnote'
 require 'minitest/autorun'
 
-module EvernoteCLI
+module Rnote
 
   describe Auth do
 
