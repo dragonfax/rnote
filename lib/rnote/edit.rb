@@ -60,7 +60,7 @@ module Rnote
         apply_set_options(note,options)
   
         if options[:editor]
-          editor(note)
+          editor(note,options[:watch])
         else
           # if not going to open an editor, then just update immediately
           save_note(note)
@@ -68,7 +68,7 @@ module Rnote
   
       elsif options[:editor]
         # no --set options
-        editor(note)
+        editor(note,options[:watch])
       else
         raise "you've specified --no-editor but provided not --set options either."
       end
@@ -92,7 +92,7 @@ module Rnote
   
     end
   
-    def editor(note)
+    def editor(note,watch=false)
   
       ENV['EDITOR'] ||= 'vim'
   
@@ -119,7 +119,7 @@ module Rnote
   
           editor_done = false
           until editor_done do
-            if not options[:watch]
+            if not watch
               waitpid(pid)
               editor_done = true
             elsif wwt.wait
@@ -147,7 +147,7 @@ module Rnote
             puts e.message
             puts e.backtrace.join("\n    ")
   
-            successful_edit = ! agree("Return to editor (otherwise changes will be lost)?")
+            successful_edit = ! agree("Return to editor? (otherwise changes will be lost)  ")
           else
             successful_edit = true
           end
@@ -163,7 +163,7 @@ module Rnote
     def update_note_from_file(note,path)
       
       yaml_stream = File.open(path,'r').read
-      updated_note = Evernote::EDAM::Type::Note.from_yaml_stream
+      updated_note = Evernote::EDAM::Type::Note.from_yaml_stream(yaml_stream)
       note.title = updated_note.title
       note.content = updated_note.content
       note.tagNames = updated_note.tagNames
