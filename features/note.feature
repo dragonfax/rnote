@@ -1,3 +1,4 @@
+@announce
 Feature:
   Create and manipulate notes in Evernote.
 
@@ -16,13 +17,14 @@ Feature:
     And I type "1"
     Then the output should contain "foo"
     
-  Scenario: Show note, after a "find"
+  Scenario: Show note after a "find"
     Given that I have 2 notes named "foo"
     When I run `rnote find note --title "foo"`
+    Then the exit status should be 0
     And I run `rnote show note 1`
+    Then the exit status should be 0
     Then the output should contain "foo"
       
-  @announce
   Scenario: Create note without editor
     Given that I have 0 notes named "test note"
     When I run `rnote create note --set-title 'test note' --no-editor`
@@ -46,22 +48,31 @@ Feature:
   Scenario: Delete note
     Given that I have 1 note named "test note"
     When I run `rnote remove note --title "test note"` interactively
+    And I wait for output to contain "Are you sure"
     And I type "Yes"
-    Then I should have 0 notes named "test note"
+    Then the exit status should be 0 
+    And I should have 0 notes named "test note"
     
-  Scenario: Delete a note, from multiple notes
+  Scenario: Delete a note from multiple notes
     Given that I have 2 notes named "test note"
     When I run `rnote remove note --title "test note"` interactively
+    And I wait for output to contain "Which note"
     And I type "1"
+    And I wait for output to contain "Are you sure"
     And I type "Yes"
+    Then the exit status should be 0 
     Then I should have 1 note named "test note"
     
-   Scenario: Delete a note after a "find"
-     Given that I have 2 note named "test note"
-     When I run `rnote find note --title "test note"` interactively
-     When I run `rnote remove note 1`
-     And I type "Yes"
-     Then I should have 1 note named "test note"
+  Scenario: Delete a note after a "find"
+    Given that I have 2 notes named "test note"
+    When I run `rnote find note --title "test note"` interactively
+    Then the output should contain "test note"
+    And the exit status should be 0
+    When I run `rnote remove note 1` interactively
+    Then I wait for output to contain "Are you sure"
+    And I type "Yes"
+    Then the exit status should be 0 
+    Then I should have 1 note named "test note"
     
     
     

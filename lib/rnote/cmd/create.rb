@@ -21,6 +21,9 @@ command :create do |verb|
       end
 
       note = Evernote::EDAM::Type::Note.new
+      # initialize empty content.
+      note.content = Rnote.markdown_to_enml('')
+      
 
       edit = Rnote::Edit.new($app.auth)
       edit.edit_action(note,options.merge(global_options))

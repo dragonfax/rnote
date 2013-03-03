@@ -69,13 +69,13 @@ module Rnote
       end
     end
 
-    def save_last_search(guids)
+    def save_last_search_guids(guids)
       modify_config do |config|
         config['last_search'] = guids
       end
     end
     
-    def get_last_search
+    def get_last_search_guids
       read_config do |config|
         config['last_search'] || []
       end

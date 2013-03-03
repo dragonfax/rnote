@@ -49,8 +49,7 @@ module Rnote
     end
     
     def get_full_note(guid)
-      note = @auth.client.note_store.getNote(guid)
-      note.content = @auth.client.note_store.getNoteContent(note.guid)
+      note = @auth.client.note_store.getNote(guid,true,false,false,false)
       note.tagNames = @auth.client.note_store.getNoteTagNames(note.guid)
       note
     end
@@ -64,17 +63,17 @@ module Rnote
       results = search(options,args)
 
       if results.empty?
-        @persister.save_last_search([])
+        @persister.save_last_search_guids([])
         puts "no notes found"
       else
-        @persister.save_last_search(results)
+        @persister.save_last_search_guids(results.map { |note| note.guid })
         display_results(results)
       end
     end
 
 
     def display_results(notes)
-      inc = 0
+      inc = 1
       notes.each do |note|
         puts "#{inc}: #{note.title} - #{note.tagNames.join(', ')}\n#{note.summarize}\n"
         inc += 1
@@ -87,7 +86,7 @@ module Rnote
     end
 
     def Find.has_search_options(options)
-      options[:title].nil?
+      !! options[:title]
     end
 
     # get the note to edit. whether from options or last search result or interactively
@@ -95,15 +94,15 @@ module Rnote
     # use last search if it makes sense to do so.
     # returns a note
     def find_note(options,args)
-
+      
       results = nil
-      if args.length == 1 and not has_search_options(options) and args[0].matchs /^\d{1,3}$/
+      if args.length == 1 and not Find.has_search_options(options) and args[0].match(/^\d{1,3}$/)
         # no search options, one argument, and its a small number
-        # use the cached search results
-        guids = @persister.get_last_results
-        results = guids.map do |guid|
-          get_full_note(guid)
-        end
+        # they are asking to pick from the last search results
+        guids = @persister.get_last_search_guids
+        guid = guids[args[0].to_i] # the chosen note
+        note = get_full_note(guid)
+        results = [note] # fake a result set with it.
       else
         results = search(options,args)
       end
