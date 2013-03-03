@@ -1,29 +1,48 @@
 
 require 'yaml'
 
-PERSISTENCE_FILE = ENV['HOME'] + '/.rnote_persist'
+RNOTE_DIR = ENV['HOME'] + '/.rnote'
+AUTH_FILE = RNOTE_DIR + '/auth'
+SEARCH_FILE = RNOTE_DIR + '/search_cache'
+
+=begin
+
+These files are always YAML.
+
+You can create and modify the rc file, at will.
+
+You shouldn't touch the auth or search_cache.
+These are auto-generated
+
+=end
+
+
+if not File.exists?(RNOTE_DIR)
+  Dir.mkdir(RNOTE_DIR)
+end
 
 module Rnote
-  class Persister
-
-    def persist_username(username)
-      modify_config do |config|
-        config['username'] = username
-      end
-    end
-
+  
+  module ConfigFile
+    
     def modify_config
+      
+      # TODO lock the file through this process
 
       config = {}
-      if File.exists?(PERSISTENCE_FILE)
-        config = YAML.load_file(PERSISTENCE_FILE)
+      if File.exists?(@config_file)
+        config = YAML.load_file(@config_file)
       end
 
       result = yield config
 
-      File.unlink(PERSISTENCE_FILE) if File.exists?(PERSISTENCE_FILE)
-      File.open(PERSISTENCE_FILE, 'w') do |f|
+      # TODO unlink is unnecessary, just truncate the file and write the new content.
+      #      this will keep permissions and lock
+      File.unlink(@config_file) if File.exists?(@config_file)
+      File.open(@config_file, 'w') do |f|
+        f.write header if self.methods.include? :header
         f.write config.to_yaml
+        after_vivify if self.methods.include? :after_vivify
       end
 
       result
@@ -32,12 +51,45 @@ module Rnote
     def read_config
 
       config = {}
-      if File.exists?(PERSISTENCE_FILE)
-        config = YAML.load_file(PERSISTENCE_FILE)
+      if File.exists?(@config_file)
+        config = YAML.load_file(@config_file)
       end
 
       yield config
     end
+    
+  end
+  
+  class AuthCache
+    
+    include ConfigFile
+    
+    def initialize
+      @config_file = AUTH_FILE
+    end
+    
+    def header
+      <<EOF
+      
+#
+# This file is auto-generated and shouldn't be edited by hand
+#
+# deleting this file is akin to logging out.
+#
+
+EOF
+    end
+    
+    def after_vivify
+      FileUtils.chmod 0600, AUTH_FILE
+    end
+    
+    def persist_username(username)
+      modify_config do |config|
+        config['username'] = username
+      end
+    end
+
 
     def persist_token(token)
       modify_config do |config|
@@ -68,7 +120,29 @@ module Rnote
         config['username']
       end
     end
+    
+  end
+  
+  class SearchCache
+    
+    include ConfigFile
+    
+    def initialize
+      @config_file = SEARCH_FILE
+    end
+    
+    def header
+      <<EOF
+      
+#
+# This file is auto-generated and shouldn't be edited by hand
+#
+# feel free to delete this file.
+#
 
+EOF
+    end
+     
     def save_last_search_guids(guids)
       modify_config do |config|
         config['last_search'] = guids
@@ -80,7 +154,47 @@ module Rnote
         config['last_search'] || []
       end
     end
+    
+  end
+  
+  class Persister
+    
+    def initialize()
+      @auth_cache = AuthCache.new
+      @search_cache = SearchCache.new
+    end
+    
+    def persist_username(*args)
+      @auth_cache.persist_username(*args)
+    end
+    
+    def persist_token(*args)
+      @auth_cache.persist_token(*args)
+    end
+    
+    def forget_token
+      @auth_cache.forget_token
+    end
+    
+    def forget_username
+      @auth_cache.forget_username
+    end
+    
+    def get_token
+      @auth_cache.get_token
+    end
+    
+    def get_username
+      @auth_cache.get_username
+    end
 
+    def get_last_search_guids
+      @search_cache.get_last_search_guids
+    end
+          
+    def save_last_search_guids(*args)
+      @search_cache.save_last_search_guids(*args)
+    end
   end
 
 end
