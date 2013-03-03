@@ -32,7 +32,6 @@ module Rnote
   
     def initialize(auth)
       @auth = auth
-      @converter = Converter.new
     end
   
     def Edit.include_set_options(noun)
@@ -51,73 +50,57 @@ module Rnote
     end
   
     def has_set_options(options)
-      options[:'set-title'].nil?
+      options[:'set-title']
     end
   
     def edit_action(note,options)
   
-      attributes = note_to_attributes(note)
-  
       if has_set_options(options)
   
-        apply_set_options(attributes,options)
+        apply_set_options(note,options)
   
         if options[:editor]
-          editor(note,attributes)
+          editor(note)
         else
           # if not going to open an editor, then just update immediately
-          update_note(note,attributes)
+          save_note(note)
         end
   
       elsif options[:editor]
         # no --set options
-        editor(note,attributes)
+        editor(note)
       else
         raise "you've specified --no-editor but provided not --set options either."
       end
   
     end
   
-    def apply_set_options(attributes,options)
+    def apply_set_options(note,options)
       if options[:'set-title']
-        attributes[:title] = options[:'set-title']
+        note.title = options[:'set-title']
       end
     end
   
-    def note_to_attributes(note)
-      {
-        :content => @converter.enml_to_raw_markdown(note.content),
-        :title => note.title
-      }
-    end
+    def save_note(note)
   
-    def update_note(note,attributes)
-  
-      # read/parse the yaml stream
-      attributes = @converter.yaml_stream_to_attributes(yaml_stream)
-  
-      # create the new note
-      note.title = attributes[:title]
-      note.content = attributes[:content]
       if note.guid
-        # TODO unset unmodified fiels to signal we're not changing them.
         @auth.client.note_store.updateNote(note)
       else
-        @auth.client.note_store.createNote(note)
+        new_note = @auth.client.note_store.createNote(note)
+        note.guid = new_note.guid
       end
   
     end
   
-    def editor(note,attributes)
+    def editor(note)
   
       ENV['EDITOR'] ||= 'vim'
-  
-      yaml_stream = @converter.attributes_to_yaml_stream(note_attributes)
   
       file = Tempfile.new(['rnote','txt'])
       begin
   
         # fill the tempfile with the yaml stream
+        yaml_stream = note.to_yaml_stream
         file.write(yaml_stream)
         file.close()
   
@@ -178,9 +161,14 @@ module Rnote
     end
   
     def update_note_from_file(note,path)
+      
       yaml_stream = File.open(path,'r').read
-      yaml to attributes
-      update_note(note,attributes)
+      updated_note = Evernote::EDAM::Type::Note.from_yaml_stream
+      note.title = updated_note.title
+      note.content = updated_note.content
+      note.tagNames = updated_note.tagNames
+      
+      save_note(note)
     end
   
   

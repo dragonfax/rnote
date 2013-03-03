@@ -23,7 +23,7 @@ command :create do |verb|
       note = Evernote::EDAM::Type::Note.new
 
       edit = Rnote::Edit.new($app.auth)
-      edit.edit_action(note,options.merge global_options)
+      edit.edit_action(note,options.merge(global_options))
 
 
     end

@@ -17,12 +17,12 @@ command :edit do |verb|
 
     noun.action do |global_options,options,args|
 
-      find = Rnote::Find.new(app.auth,app.persister)
-      edit = Rnote::Edit.new(app.auth)
+      find = Rnote::Find.new($app.auth,$app.persister)
+      edit = Rnote::Edit.new($app.auth)
 
-      note = find.find_note(options,args)
+      note = find.find_note(options.merge(global_options),args)
 
-      edit.edit_action(note,options)
+      edit.edit_action(note,options.merge(global_options))
 
     end
 

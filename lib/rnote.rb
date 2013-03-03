@@ -34,10 +34,9 @@ class Evernote::EDAM::Type::Note
   
   # we use this to track if this note came from our search cache
   # it means the note may not be fully pouplated.
-  attr_accessor :cached
   
   def summarize
-    "#{self.title}\n#{Rnote.enml_to_markdown(self.content)[0..30]}\n"
+    "#{Rnote.enml_to_markdown(self.content)[0..30]}\n"
   end
   
   # The yaml stream is what we give to the user to edit in their editor

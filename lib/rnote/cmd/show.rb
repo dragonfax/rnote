@@ -21,13 +21,9 @@ command :show do |verb|
       find = Rnote::Find.new($app.auth,$app.persister)
       note = find.find_note(options.merge(global_options),args)
       
-      if note.cached
-        note.content = @auth.client.note_store.getNote
-      end
-            
       content = Rnote.enml_to_markdown note.content
       
-      put note.title if options[:'include-title']
+      puts note.title if options[:'include-title']
       puts content
 
     end

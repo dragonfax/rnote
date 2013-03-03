@@ -37,11 +37,22 @@ module Rnote
       # we fully pouplate each note at search time
       # poor choice for performance, though
       notes.each do |note|
-        note.content = @auth.client.note_store.getNoteContent(note.guid)
-        note.tagNames = @auth.client.note_store.getNoteTagNames(note.guid)
+        fill_note(note)
       end
 
       notes
+    end
+    
+    def fill_note(note)
+      note.content = @auth.client.note_store.getNoteContent(note.guid)
+      note.tagNames = @auth.client.note_store.getNoteTagNames(note.guid)
+    end
+    
+    def get_full_note(guid)
+      note = @auth.client.note_store.getNote(guid)
+      note.content = @auth.client.note_store.getNoteContent(note.guid)
+      note.tagNames = @auth.client.note_store.getNoteTagNames(note.guid)
+      note
     end
 
     # runs the search
@@ -65,7 +76,7 @@ module Rnote
     def display_results(notes)
       inc = 0
       notes.each do |note|
-        puts "#{inc}: #{note.title}\n#{note.summarize}\n"
+        puts "#{inc}: #{note.title} - #{note.tagNames.join(', ')}\n#{note.summarize}\n"
         inc += 1
       end
     end
@@ -89,7 +100,10 @@ module Rnote
       if args.length == 1 and not has_search_options(options) and args[0].matchs /^\d{1,3}$/
         # no search options, one argument, and its a small number
         # use the cached search results
-        results = @persister.get_last_results
+        guids = @persister.get_last_results
+        results = guids.map do |guid|
+          get_full_note(guid)
+        end
       else
         results = search(options,args)
       end
