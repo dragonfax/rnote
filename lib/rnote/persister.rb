@@ -233,6 +233,10 @@ EOF
     def save_last_search_guids(*args)
       @search_cache.save_last_search_guids(*args)
     end
+    
+    def sandbox
+      @settings.sandbox
+    end
   end
 
 end

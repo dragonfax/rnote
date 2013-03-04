@@ -51,7 +51,7 @@ module Rnote
         raise "not logged in"
       end
 
-      @client ||= EvernoteOAuth::Client.new(token: @persister.get_token)
+      @client ||= EvernoteOAuth::Client.new(token: @persister.get_token, sandbox: @persister.sandbox)
 
       @client
     end
