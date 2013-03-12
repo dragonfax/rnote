@@ -9,7 +9,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'http://github.com/dragonfax/evernote'
   s.platform = Gem::Platform::RUBY
   s.summary = 'CLI to Evernote'
-  s.files = FileList['bin/rnote',"lib/**/*.rb"].to_a
+  s.files = FileList['bin/rnote',"lib/**/*.rb"].to_a.select { |path| not ( path =~ /environment.rb$/ ) }
   s.require_paths << 'lib'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc','rnote.rdoc']

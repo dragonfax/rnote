@@ -1,10 +1,12 @@
 
 require 'yaml'
 
-RNOTE_DIR = ENV['HOME'] + '/.rnote'
-AUTH_FILE = RNOTE_DIR + '/auth'
-SEARCH_FILE = RNOTE_DIR + '/search_cache'
-SETTINGS_FILE = RNOTE_DIR + '/rnoterc'
+require_relative 'environment'
+
+RNOTE_HOME ||= ENV['HOME'] + '/.rnote' # should only happen in the installed gem.
+AUTH_FILE = RNOTE_HOME + '/auth'
+SEARCH_FILE = RNOTE_HOME + '/search_cache'
+SETTINGS_FILE = RNOTE_HOME + '/rnoterc'
 
 =begin
 
@@ -18,8 +20,8 @@ These are auto-generated
 =end
 
 
-if not File.exists?(RNOTE_DIR)
-  Dir.mkdir(RNOTE_DIR)
+if not File.exists?(RNOTE_HOME)
+  Dir.mkdir(RNOTE_HOME)
 end
 
 module Rnote
