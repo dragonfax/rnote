@@ -13,8 +13,22 @@ module Rnote
     def initialize(persister)
       @persister = persister
     end
+    
+    def login_with_developer_token(developer_token, sandbox=false)
+      if is_logged_in
+        if @persister.get_developer_token == developer_token
+          return
+        else
+          logout
+        end
+      end
+      @persister.persist_developer_token(developer_token)
+      @persister.persist_sandbox(sandbox)
+    end
 
-    def login(username,password)
+    def login_with_password(username,password,consumer_key=nil,consumer_secret=nil,sandbox=false)
+      
+      get key and secret from a lib file if necessary
 
       if is_logged_in
         if who == username
@@ -25,21 +39,24 @@ module Rnote
           logout
         end
       end
+      
+      ## Get a user key using these crednetials
 
       # this client isn't authorized, and can only request authorization. no api calls.
       client = EvernoteOAuth::Client.new(
-          consumer_key: CONSUMER_KEY,
-          consumer_secret: CONSUMER_SECRET,
-          sandbox: @persister.sandbox
+          consumer_key: consumer_key,
+          consumer_secret: consumer_secret,
+          sandbox: sandbox
       )
 
       request_token = client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)
       oauth_verifier = mechanize_login(request_token.authorize_url, username, password)
       access_token = request_token.get_access_token(oauth_verifier: oauth_verifier)
-      token = access_token.token
+      user_token = access_token.token
 
       @persister.persist_username(username)
-      @persister.persist_token(token)
+      @persister.persist_user_token(user_token)
+      @persister.persist_sandbox(sandbox)
 
     end
 
@@ -50,8 +67,10 @@ module Rnote
       if not is_logged_in
         raise "not logged in"
       end
+      
+      token = @persister.get_user_token || @persister.get_developer_token
 
-      @client ||= EvernoteOAuth::Client.new(token: @persister.get_token, sandbox: @persister.sandbox)
+      @client ||= EvernoteOAuth::Client.new(token: token, sandbox: @persister.get_sandbox)
 
       @client
     end
@@ -84,7 +103,7 @@ module Rnote
     end
 
     def is_logged_in
-      !!@persister.get_token
+      @persister.get_user_token or @persister.get_developer_token
     end
 
     def who
@@ -99,8 +118,10 @@ module Rnote
     def logout
       # unfortunately, no way to revoke a token via API
       # TODO perhaps I can redo the oauth, and choose revoke instead of re-accept
-      @persister.forget_token
+      @persister.forget_user_token
       @persister.forget_username
+      @persister.forget_developer_token
+      @persister.forget_sandbox
     end
 
   end

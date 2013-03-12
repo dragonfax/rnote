@@ -1,12 +1,18 @@
 
 require 'yaml'
 
-require_relative 'environment'
+begin
+  # this file only exists in development
+  # its not included in the gem, 
+  # and thus not found in production (the installed gem)
+  require_relative 'environment'
+rescue LoadError
+  # in production then.
+end
 
 RNOTE_HOME ||= ENV['HOME'] + '/.rnote' # should only happen in the installed gem.
 AUTH_FILE = RNOTE_HOME + '/auth'
 SEARCH_FILE = RNOTE_HOME + '/search_cache'
-SETTINGS_FILE = RNOTE_HOME + '/rnoterc'
 
 =begin
 
@@ -91,41 +97,82 @@ EOF
     
     def persist_username(username)
       modify_config do |config|
-        config['username'] = username
+        config[:username] = username
       end
     end
 
 
-    def persist_token(token)
+    def persist_user_token(user_token)
       modify_config do |config|
-        config['token'] = token
+        config[:user_token] = user_token
+      end
+    end
+    
+    def persist_developer_token(developer_token)
+      modify_config do |config|
+        config[:developer_token] = developer_token
       end
     end
 
-    def forget_token
+    def forget_user_token
       modify_config do |config|
-        config.delete('token')
+        config.delete(:user_token)
       end
     end
 
     def forget_username
       modify_config do |config|
-        config.delete('username')
+        config.delete(:username)
+      end
+    end
+    
+    def forget_developer_token
+      modify_config do |config|
+        config.delete(:developer_token)
       end
     end
 
-    def get_token
+    def get_user_token
       read_config do |config|
-        config['token']
+        config[:user_token]
       end
     end
 
     def get_username
       read_config do |config|
-        config['username']
+        config[:username]
       end
     end
     
+    def get_developer_token
+      read_config do |config|
+        config[:developer_token]
+      end
+    end
+    
+    def get_sandbox
+      read_config do |config|
+        if config[:sandbox].nil?
+          # default to true
+          false
+        else
+          config[:sandbox]
+        end
+      end
+    end
+    
+    def persist_sandbox(sandbox)
+      modify_config do |config|
+        config[:sandbox] = sandbox
+      end
+    end
+    
+    def forget_sandbox
+      modify_config do |config|
+        config.delete(:sandbox)
+      end
+    end
+     
   end
   
   class SearchCache
@@ -150,43 +197,13 @@ EOF
      
     def save_last_search_guids(guids)
       modify_config do |config|
-        config['last_search'] = guids
+        config[:last_search] = guids
       end
     end
     
     def get_last_search_guids
       read_config do |config|
-        config['last_search'] || []
-      end
-    end
-    
-  end
-  
-  class Settings 
-    include ConfigFile
-    
-    def initialize
-      @config_file = SETTINGS_FILE
-    end
-    
-    def readonly
-      true
-    end
-     
-    def developer_token
-      read_config do |config|
-        config['developer_token']
-      end
-    end
-    
-    def sandbox
-      read_config do |config|
-        if config['sandbox'].nil?
-          # default to true, just incase
-          false
-        else
-          config['sandbox']
-        end
+        config[:last_search] || []
       end
     end
     
@@ -197,48 +214,18 @@ EOF
     def initialize()
       @auth_cache = AuthCache.new
       @search_cache = SearchCache.new
-      @settings = Settings.new
     end
     
-    def persist_username(*args)
-      @auth_cache.persist_username(*args)
-    end
-    
-    def persist_token(*args)
-      @auth_cache.persist_token(*args)
-    end
-    
-    def forget_token
-      @auth_cache.forget_token
-    end
-    
-    def forget_username
-      @auth_cache.forget_username
-    end
-    
-    def get_token
-      if @settings.developer_token
-        @settings.developer_token
+    def method_missing(method,*args)
+      if @auth_cache.respond_to?(method)
+        @auth_cache.method(method).call(*args)
+      elsif @search_cache.respond_to?(method)
+        @search_cache.method(method).class(*args)
       else
-        @auth_cache.get_token
+        super
       end
     end
-    
-    def get_username
-      @auth_cache.get_username
-    end
 
-    def get_last_search_guids
-      @search_cache.get_last_search_guids
-    end
-          
-    def save_last_search_guids(*args)
-      @search_cache.save_last_search_guids(*args)
-    end
-    
-    def sandbox
-      @settings.sandbox
-    end
   end
 
 end
