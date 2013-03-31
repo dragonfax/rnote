@@ -1,4 +1,5 @@
-= rnote
+RNote
+====
 
 A command line interface to Evernote. 
 
@@ -13,11 +14,11 @@ Nouns & Verbs
 
 The subcommands are arranged into pairs of nouns and verbs. First you specify a verb, then you specify a noun.
 
-$ rnote find note
+`$ rnote find note`
 
 But most verbs will assume a default noun of 'note' so you can cut it short.
 
-$ rnote find
+`$ rnote find`
 
 **nouns**
 * note
@@ -26,6 +27,7 @@ $ rnote find
 
 **verbs**
 * list
+* find
 * show
 * edit
 * create
@@ -92,7 +94,7 @@ $ rnote create --set-title "new note title"
 $ rnote edit new note title
 ```
 
-You could login with your username and password instead, but you'll also have to get your hands on a consume key that works in production. Thats requires a bit more effort.
+You could login with your username and password instead, but you'll also have to get your hands on a consumer key that works in production. That requires a bit more effort.
 
 
 What Works
@@ -113,8 +115,8 @@ Anything listed in 'interface' but that doesn't yet have a feature test written 
 TODO
 ---
 
-[ ] Anything from 'interface' not yet implemented
-[ ] using the 'revokeLongSession' api method to implement a proper 'logout'
-[ ] additional format options (only txt for now, and markdown isn't really implemented)
-[ ] the entire tool is too slow
-[ ] improve search result display formating
+* [ ] Anything from 'interface' not yet implemented
+* [ ] using the 'revokeLongSession' api method to implement a proper 'logout'
+* [ ] additional format options (only txt for now, and markdown isn't really implemented)
+* [ ] the entire tool is too slow
+* [ ] improve search result display formating
