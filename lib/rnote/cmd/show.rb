@@ -29,6 +29,8 @@ command :show do |verb|
     end
 
   end
+  
+  verb.default_command :note
 end
 
 

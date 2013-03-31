@@ -18,5 +18,7 @@ command :find do |verb|
 
     end
   end
+  
+  verb.default_command :note
 end
 

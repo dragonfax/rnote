@@ -27,6 +27,8 @@ command :edit do |verb|
     end
 
   end
+  
+  verb.default_command :note
 
 end
 
