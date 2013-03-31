@@ -9,10 +9,15 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'http://github.com/dragonfax/evernote'
   s.platform = Gem::Platform::RUBY
   s.summary = 'CLI to Evernote'
+  s.description = <<-EOF
+    RNote is a command line tool for accessing Evernote.
+    You can use it to find, create, and edit notes directly on the Evernote Cloud.
+    RNote will launch your own EDITOR when you ask to edit a note. Much like git does for commit messages.
+  EOF
   s.files = FileList['bin/rnote',"lib/**/*.rb"].to_a.select { |path| not ( path =~ /environment.rb$/ ) }
   s.require_paths << 'lib'
   s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc','rnote.rdoc']
+  s.extra_rdoc_files = ['rnote.rdoc']
   s.rdoc_options << '--title' << 'rnote' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
   s.executables << 'rnote'
