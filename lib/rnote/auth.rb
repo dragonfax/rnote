@@ -66,7 +66,7 @@ module Rnote
       end
       
       token = @persister.get_user_token || @persister.get_developer_token
-
+      
       @client ||= EvernoteOAuth::Client.new(token: token, sandbox: @persister.get_sandbox)
 
       @client

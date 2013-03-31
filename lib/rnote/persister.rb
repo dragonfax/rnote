@@ -142,12 +142,7 @@ EOF
     
     def get_sandbox
       read_config do |config|
-        if config[:sandbox].nil?
-          # default to true
-          true
-        else
-          config[:sandbox]
-        end
+        config[:sandbox]
       end
     end
     

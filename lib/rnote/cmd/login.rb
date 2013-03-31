@@ -16,7 +16,7 @@ command :login do |c|
   c.flag [:d,:'dev-token',:'developer-token']
   
   c.desc "use the sandbox environment in lue of the production evernote system."
-  c.default_value :false
+  c.default_value false
   c.switch [:s,:sandbox]
   
   c.desc "provide a consumer key, instead of the included one."
