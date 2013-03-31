@@ -26,6 +26,14 @@ command :login do |c|
   
   c.action do |global_options,options,args|
 		raise unless args.length == 0
+
+    if options[:key]
+      $app.persister.persist_consumer_key(options[:key])
+    end
+    
+    if options[:secret]
+      $app.persister.persist_consumer_secret(options[:secret])
+    end
     
     if options[:d]
       # first check for a dev token
