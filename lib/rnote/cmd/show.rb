@@ -21,7 +21,7 @@ command :show do |verb|
       find = Rnote::Find.new($app.auth,$app.persister)
       note = find.find_note(options.merge(global_options),args)
       
-      content = note.markdown_content
+      content = note.txt_content
       
       puts note.title if options[:'include-title']
       puts content

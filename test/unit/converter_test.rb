@@ -11,12 +11,13 @@ module Rnote
     describe 'enml2md' do
 
       it 'converts a <pre> tag to md verbatim' do
-        assert_equal "test1",Evernote::EDAM::Type::Note.enml_to_markdown(<<EOF)
+        enml = <<EOF
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
 <en-note><pre>test1</pre></en-note>
 EOF
-       end
+        assert_equal "test1",Evernote::EDAM::Type::Note.enml_to_markdown(enml)
+      end
 
       it 'fails if receives invalid enml' do
         assert_raises(Evernote::EDAM::Error::InvalidXmlError) do
