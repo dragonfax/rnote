@@ -1,5 +1,5 @@
 
-Most of this is unfinished. As it is finished its moved to "feature" tests.
+Most of this is unimpleented. As it is finished its moved to "feature" tests.
 
 describe "create note"
 

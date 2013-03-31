@@ -112,11 +112,12 @@ EOF
     attributes_hash = YAML.load(attributes_yaml)
 
     self.title = attributes_hash['title']
+    self.tagNames = attributes_hash['tagNames']
     self.content = enml
   end
   
-  def yaml_stream()
-    YAML.dump({ 'title' => title }) + "\n---\n" + self.class.enml_to_txt(content)
+  def yaml_stream
+    YAML.dump({ 'title' => title, 'tagNames' => tagNames }) + "\n---\n" + self.class.enml_to_txt(content)
   end
   
   def summarize
