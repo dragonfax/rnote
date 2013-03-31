@@ -8,9 +8,11 @@ begin
   require_relative 'environment'
 rescue LoadError
   # in production then.
+  RNOTE_HOME ||= ENV['HOME'] + '/.rnote' # should only happen in the installed gem.
+  RNOTE_TESTING_OK = false
+  RNOTE_ENVIRONMENT = :production
 end
 
-RNOTE_HOME ||= ENV['HOME'] + '/.rnote' # should only happen in the installed gem.
 AUTH_FILE = RNOTE_HOME + '/auth'
 SEARCH_FILE = RNOTE_HOME + '/search_cache'
 

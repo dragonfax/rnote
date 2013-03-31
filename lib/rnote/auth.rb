@@ -9,7 +9,7 @@ module Rnote
 
   class Auth
 
-    def initialize(persister)
+    def initialize(persister=Persister.new)
       @persister = persister
     end
     

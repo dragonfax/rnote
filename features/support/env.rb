@@ -21,19 +21,6 @@ end
 
 module Rnote
   
-
-  module Secrets
-
-    def username
-      SANDBOX_USERNAME
-    end
-
-    def password
-      SANDBOX_PASSWORD
-    end
-
-  end
-
   class ApiHelper
     
     include MiniTest::Assertions
@@ -51,8 +38,6 @@ module Rnote
   end
 
 end
-
-World(Rnote::Secrets)
 
 World do
   Rnote::ApiHelper.new

@@ -11,7 +11,7 @@ module Rnote
     it "can log into the sandbox" do
 
       auth = Auth.new
-      auth.login(SANDBOX_USERNAME, SANDBOX_PASSWORD)
+      auth.login(SANDBOX_USERNAME1, SANDBOX_PASSWORD1)
 
     end
 
