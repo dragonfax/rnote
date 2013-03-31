@@ -20,7 +20,7 @@ module Rnote
       auth = Auth.new(persister)
       persister.persist_consumer_key(SANDBOX_CONSUMER_KEY)
       persister.persist_consumer_secret(SANDBOX_CONSUMER_SECRET)
-      auth.login_with_password(SANDBOX_USERNAME1, SANDBOX_PASSWORD1)
+      auth.login_with_password(SANDBOX_USERNAME1, SANDBOX_PASSWORD1, true)
 
     end
 

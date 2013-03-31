@@ -5,7 +5,8 @@ require 'minitest/autorun'
 def notes_by_title(title)
   filter = Evernote::EDAM::NoteStore::NoteFilter.new
   filter.words = "intitle:\"#{title}\""
-  notes = client.note_store.findNotes(filter,0,99).notes
+  note_list = client.note_store.findNotes(filter,0,99)
+  notes = note_list.notes
   notes.each do |note|
     note.content = client.note_store.getNoteContent(note.guid)
   end

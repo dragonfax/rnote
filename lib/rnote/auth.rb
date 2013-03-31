@@ -46,7 +46,7 @@ module Rnote
           sandbox: sandbox
       )
 
-      request_token = auth_client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)
+      request_token = auth_client.request_token(:oauth_callback => DUMMY_CALLBACK_URL)
       oauth_verifier = mechanize_login(request_token.authorize_url, username, password)
       access_token = request_token.get_access_token(oauth_verifier: oauth_verifier)
       user_token = access_token.token
