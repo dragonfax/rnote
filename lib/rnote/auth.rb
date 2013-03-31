@@ -13,7 +13,7 @@ module Rnote
       @persister = persister
     end
     
-    def login_with_developer_token(developer_token, sandbox=false)
+    def login_with_developer_token(developer_token)
       if is_logged_in
         if @persister.get_developer_token == developer_token
           return
@@ -22,13 +22,11 @@ module Rnote
         end
       end
       @persister.persist_developer_token(developer_token)
-      @persister.persist_sandbox(sandbox)
+      @persister.persist_sandbox(RNOTE_ENVIRONMENT == :sandbox)
     end
 
-    def login_with_password(username,password,consumer_key=nil,consumer_secret=nil,sandbox=false)
+    def login_with_password(username,password)
       
-      get key and secret from a lib file if necessary
-
       if is_logged_in
         if who == username
           # already logged in (we don't check against service though)
@@ -40,11 +38,13 @@ module Rnote
       end
       
       ## Get a user key using these crednetials
+      
+      sandbox = RNOTE_ENVIRONMENT == :sandbox
 
       # this client isn't authorized, and can only request authorization. no api calls.
       client = EvernoteOAuth::Client.new(
-          consumer_key: consumer_key,
-          consumer_secret: consumer_secret,
+          consumer_key: @persister.get_consumer_key,
+          consumer_secret: @persister.get_consumer_secret,
           sandbox: sandbox
       )
 
@@ -107,7 +107,7 @@ module Rnote
 
     def who
       if is_logged_in
-        @persister.get_username
+        @persister.get_username or @persister.get_developer_token
       else
         nil
       end

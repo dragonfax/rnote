@@ -9,9 +9,16 @@ module Rnote
   describe Auth do
 
     it "can log into the sandbox" do
+      
+      # note that this test creates a new user token in the sandbox
+      # there is no way to revoke these tokesn via just the API.
+      # so they will build up over time.
 
-      auth = Auth.new
-      auth.login(SANDBOX_USERNAME1, SANDBOX_PASSWORD1)
+      persister = Persister.new
+      auth = Auth.new(persister)
+      persister.persist_consumer_key(SANDBOX_CONSUMER_KEY)
+      persister.persist_consumer_secret(SANDBOX_CONSUMER_SECRET)
+      auth.login_with_password(SANDBOX_USERNAME1, SANDBOX_PASSWORD1)
 
     end
 

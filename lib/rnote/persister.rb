@@ -163,9 +163,41 @@ EOF
       end
     end
     
+    def get_consumer_key
+      read_config do |config|
+        if config[:consumer_key].nil?
+          raise "no consumer key saved"
+        else
+          config[:consumer_key]
+        end
+      end
+    end
+    
+    def get_consumer_secret
+      read_config do |config|
+        if config[:consumer_secret].nil?
+          raise "noc consumer secret saved"
+        else
+          config[:consumer_secret]
+        end
+      end
+    end
+    
     def persist_sandbox(sandbox)
       modify_config do |config|
         config[:sandbox] = sandbox
+      end
+    end
+    
+    def persist_consumer_key(consumer_key)
+      modify_config do|config|
+        config[:consumer_key] = consumer_key
+      end
+    end
+    
+    def persist_consumer_secret(consumer_secret)
+      modify_config do |config|
+        config[:consumer_secret] = consumer_secret
       end
     end
     
@@ -174,7 +206,7 @@ EOF
         config.delete(:sandbox)
       end
     end
-     
+    
   end
   
   class SearchCache
