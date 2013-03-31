@@ -1,7 +1,6 @@
 
 require 'mechanize'
 require 'evernote_oauth'
-require 'rnote/secrets'
 require 'rnote/persister'
 
 DUMMY_CALLBACK_URL = 'http://www.evernote.com'

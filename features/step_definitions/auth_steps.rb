@@ -2,9 +2,9 @@
 
 ## Given
 
-Given /^I am logged in as dragonfax$/ do
-  step 'I run `rnote login --user=dragonfax --password=<password>` with password'
-  step 'I should be logged in as "dragonfax"'
+Given /^I am logged in as dragonfax_test1$/ do
+  step 'I run `rnote login --user=dragonfax_test1 --password=<password>` with password'
+  step 'I should be logged in as "dragonfax_test1"'
 end
 
 Given /^I am logged out$/ do
