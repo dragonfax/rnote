@@ -71,6 +71,10 @@ module Rnote
 
       @client
     end
+    
+    def note_store
+      client.note_store
+    end
 
     def mechanize_login(url, username, password)
 

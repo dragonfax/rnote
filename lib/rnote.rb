@@ -44,4 +44,32 @@ module Rnote
 
 end
 
+module EDAMErrors
+  
+  def error_code_string
+    Evernote::EDAM::Error::EDAMErrorCode.constants.select { |constant_sym|
+      Evernote::EDAM::Error::EDAMErrorCode.const_get(constant_sym) == self.errorCode
+    }.first.to_s
+  end
+  
+end
 
+class Evernote::EDAM::Error::EDAMSystemException
+  
+  include EDAMErrors
+  
+  def error_message
+    "#{self.error_code_string}(#{self.errorCode}: #{self.message})"
+  end
+  
+end
+
+class Evernote::EDAM::Error::EDAMUserException
+
+  include EDAMErrors
+ 
+  def error_message
+    "#{self.error_code_string}(#{self.errorCode}): #{self.parameter}"
+  end
+  
+end

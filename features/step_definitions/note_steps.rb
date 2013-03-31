@@ -17,24 +17,12 @@ Transform /^(-?\d+) notes?$/ do |number|
   number.to_i
 end
 
-class Evernote::EDAM::Error::EDAMUserException
-  def error_code_string
-    Evernote::EDAM::Error::EDAMErrorCode.constants.select { |constant_sym|
-      Evernote::EDAM::Error::EDAMErrorCode.const_get(constant_sym) == errorCode
-    }.first.to_s
-  end
-end
 
 def create_note(title,content='')
   note = Evernote::EDAM::Type::Note.new
   note.title = title
   note.markdown_content = content
-  #begin
-    client.note_store.createNote(note)
-  #rescue Evernote::EDAM::Error::EDAMUserException => e
-  #  puts "#{e.error_code_string}(#{e.errorCode}): #{e.parameter}"
-  #  raise e
-  #end
+  client.note_store.createNote(note)
 end
 
 
