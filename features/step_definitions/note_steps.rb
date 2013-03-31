@@ -17,11 +17,24 @@ Transform /^(-?\d+) notes?$/ do |number|
   number.to_i
 end
 
+class Evernote::EDAM::Error::EDAMUserException
+  def error_code_string
+    Evernote::EDAM::Error::EDAMErrorCode.constants.select { |constant_sym|
+      Evernote::EDAM::Error::EDAMErrorCode.const_get(constant_sym) == errorCode
+    }.first.to_s
+  end
+end
+
 def create_note(title,content='')
   note = Evernote::EDAM::Type::Note.new
   note.title = title
   note.markdown_content = content
-  client.note_store.createNote(note)
+  #begin
+    client.note_store.createNote(note)
+  #rescue Evernote::EDAM::Error::EDAMUserException => e
+  #  puts "#{e.error_code_string}(#{e.errorCode}): #{e.parameter}"
+  #  raise e
+  #end
 end
 
 
@@ -58,6 +71,21 @@ Given /^that I have (\d+ notes?) named "([^"]+?)" with content "([^"]*?)"$/ do |
   assert_equal count, notes_by_title(title).length
 end
  
+When /^I run `(.*?)` with vim$/ do |command|
+
+  previous_value = ENV['EDITOR']
+  ENV['EDITOR'] = 'vim'
+  begin
+
+    step "I run `#{command}` interactively"
+
+  ensure
+    if previous_value
+      ENV['EDITOR'] = previous_value
+    end
+  end
+
+end
 
 When /^I run `(.*?)` with editor$/ do |command|
 
@@ -79,6 +107,9 @@ When /^I exit the editor$/ do
   step 'I type ""'
 end
 
+When /^I wait (\d+) seconds$/ do |timeout|
+  sleep(timeout.to_i)
+end
 
 
 Then /^I should have (\d+ notes?) named "(.*?)"$/ do |count,title|
@@ -93,6 +124,9 @@ Then /^the note named "(.*?)" should be empty$/ do |title|
 end
 
 Then /^the note named "(.*?)" should contain "(.*?)"$/ do |title, content|
-  step "I run `rnote show note --title \"#{title}\"`"
-  step "the output should contain \"#{content}\""
+  # can't use substeps here, as i want this to be callable while an interactive command is being run.
+  notes = notes_by_title(title)
+  assert notes.length > 0
+  matching_notes = notes.select { |note| note.content.include?(content) }
+  assert matching_notes.length > 0
 end

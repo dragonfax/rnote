@@ -120,7 +120,7 @@ module Rnote
           editor_done = false
           until editor_done do
             if not watch
-              waitpid(pid)
+              Process.waitpid(pid)
               editor_done = true
             elsif wwt.wait
               # process done

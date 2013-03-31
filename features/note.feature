@@ -32,19 +32,39 @@ Feature:
 
   Scenario: Create note with editor
     Given that I have 0 notes named "test note"
-    When I run `rnote create note --set-title 'test note'` with editor
-    And I type "test content"
-    And I exit the editor
-    Then the note named "test note" should contain "test content"
+    When I run `rnote create note --set-title 'test note' --no-watch` with vim
+    And I type "Gotest content"
+    # quit editor
+    And I type ":wq"
+    Then the exit status should be 0
+    And the note named "test note" should contain "test content"
 
   Scenario: Edit note with editor
     Given that I have 1 note named "test note"
-    When I run `rnote edit note --title 'test note'` with editor
-    And I type "test content"
-    And I exit the editor
-    Then the note named "test note" should contain "test content"
+    When I run `rnote edit note --title 'test note' --no-watch` with vim
+    And I type "Gotest content"
+    And I type ":wq"
+    Then the exit status should be 0
+    And the note named "test note" should contain "test content"
     
-    
+  Scenario: Create note with VIM, watching for changes every second
+    When I run `rnote create note --set-title 'test note'` with vim
+    # end of file
+    And I type "G"
+    # add line below cursor
+    And I type "otest content1"
+    # save the changes
+    And I type ":w"
+    And I wait 2 seconds
+    Then the note named "test note" should contain "test content1"
+    # next phase of the test, odd for cucumber tests, I know.
+    When I type "otest content2"
+    And I type ":w"
+    And I wait 2 seconds
+    Then the note named "test note" should contain "test content2"
+    When I type ":wq"
+    Then the exit status should be 0
+     
   Scenario: Delete note
     Given that I have 1 note named "test note"
     When I run `rnote remove note --title "test note"` interactively

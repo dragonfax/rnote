@@ -82,7 +82,7 @@ class Evernote::EDAM::Type::Note
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
 <en-note>
 <pre>#{txt}</pre>
-</en-note>'
+</en-note>
 EOF
   end
   
