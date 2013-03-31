@@ -2,7 +2,9 @@
 require 'nokogiri'
 require 'yaml'
 
-module Rnote
+require 'evernote-thrift'
+
+module Evernote::EDAM::Error
 
   # converting between markdown and enml
   #
@@ -20,7 +22,10 @@ module Rnote
   # the yaml_stream is just a string
   # the note attributes get its own class and thats where we stick the conversion routines.
   
-  class InvalidXmlError < Exception 
+  class InvalidFormatError < Exception
+  end
+  
+  class InvalidXmlError < InvalidFormatError
     
     attr_reader :xml
     
@@ -30,16 +35,20 @@ module Rnote
     end
   end
   
-  class InvalidMarkdownError < Exception
+  class InvalidMarkdownError < InvalidFormatError
     def initialize(message, markdown=nil)
       @markdown = markdown
       super(message)
     end
   end
   
-  def Rnote.enml_to_markdown(enml)
+end
+  
+class Evernote::EDAM::Type::Note
+  
+  def self.enml_to_markdown(enml)
     document =  Nokogiri::XML::Document.parse(enml)
-    raise InvalidXmlError.new("invalid xml",enml) unless document.root
+    raise Evernote::EDAM::Error::InvalidXmlError.new("invalid xml",enml) unless document.root
     pre_node = document.root.xpath('pre').first
     if pre_node
       pre_node.children.to_ary.select { |child| child.text? }.map { |child| child.to_s }.join('')
@@ -48,9 +57,9 @@ module Rnote
     end
   end
 
-  def Rnote.markdown_to_enml(markdown)
+  def self.markdown_to_enml(markdown)
     if markdown.start_with? '<?xml'
-      raise InvalidMarkdownError.new('given xml instead of markdown')
+      raise Evernote::EDAM::Error::InvalidMarkdownError.new('given xml instead of markdown')
     end
     <<-EOF
 <?xml version='1.0' encoding='utf-8'?>
@@ -60,7 +69,42 @@ module Rnote
 </en-note>
 EOF
   end
+  
+  def markdown_content=(markdown_content)
+    self.content = self.class.markdown_to_enml(markdown_content)
+  end
+  
+  def markdown_content
+    self.class.enml_to_markdown(content)
+  end
+  
+  # The yaml stream is what we give to the user to edit in their editor
+  # 
+  # Its just a string, but its composed of 2 parts. the note attributes and the note content.
+  #
+  # 1. a small yaml document with the note attributes as a hash.
+  # 2. followed by the note content as markdown
+  def yaml_stream=(yaml_stream)
 
+    m = yaml_stream.match /^(---.+?---\n)(.*)$/m
+    raise "failed to parse yaml stream\n#{yaml_stream}" unless m
 
+    attributes_yaml = m[1]
+    markdown = m[2]
+
+    enml = self.class.markdown_to_enml(markdown)
+    attributes_hash = YAML.load(attributes_yaml)
+
+    self.title = attributes_hash['title']
+    self.content = enml
+  end
+  
+  def yaml_stream()
+    YAML.dump({ 'title' => title }) + "\n---\n" + self.class.enml_to_markdown(content)
+  end
+  
+  def summarize
+    self.markdown_content[0..30]
+  end
 
 end

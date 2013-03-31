@@ -49,13 +49,13 @@ module Rnote
       noun.switch :editor
     end
   
-    def has_set_options(options)
+    def Edit.has_set_options(options)
       options[:'set-title']
     end
   
     def edit_action(note,options)
   
-      if has_set_options(options)
+      if Edit.has_set_options(options)
   
         apply_set_options(note,options)
   
@@ -96,11 +96,11 @@ module Rnote
   
       ENV['EDITOR'] ||= 'vim'
   
-      file = Tempfile.new(['rnote','txt'])
+      file = Tempfile.new(['rnote','md'])
       begin
   
         # fill the tempfile with the yaml stream
-        yaml_stream = note.to_yaml_stream
+        yaml_stream = note.yaml_stream
         file.write(yaml_stream)
         file.close()
   
@@ -163,10 +163,7 @@ module Rnote
     def update_note_from_file(note,path)
       
       yaml_stream = File.open(path,'r').read
-      updated_note = Evernote::EDAM::Type::Note.from_yaml_stream(yaml_stream)
-      note.title = updated_note.title
-      note.content = updated_note.content
-      note.tagNames = updated_note.tagNames
+      note.yaml_stream = yaml_stream
       
       save_note(note)
     end

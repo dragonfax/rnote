@@ -35,6 +35,7 @@ module Rnote
     end
 
     def client
+      assert @auth.client.instance_of?(EvernoteOAuth::Client)
       @auth.client
     end
 

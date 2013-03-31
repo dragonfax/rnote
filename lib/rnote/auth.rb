@@ -40,13 +40,13 @@ module Rnote
       ## Get a user key using these crednetials
       
       # this client isn't authorized, and can only request authorization. no api calls.
-      client = EvernoteOAuth::Client.new(
+      auth_client = EvernoteOAuth::Client.new(
           consumer_key: @persister.get_consumer_key,
           consumer_secret: @persister.get_consumer_secret,
           sandbox: sandbox
       )
 
-      request_token = client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)
+      request_token = auth_client.authentication_request_token(:oauth_callback => DUMMY_CALLBACK_URL)
       oauth_verifier = mechanize_login(request_token.authorize_url, username, password)
       access_token = request_token.get_access_token(oauth_verifier: oauth_verifier)
       user_token = access_token.token

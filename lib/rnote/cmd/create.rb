@@ -22,7 +22,7 @@ command :create do |verb|
 
       note = Evernote::EDAM::Type::Note.new
       # initialize empty content.
-      note.content = Rnote.markdown_to_enml('')
+      note.markdown_content = ''
       
 
       edit = Rnote::Edit.new($app.auth)
