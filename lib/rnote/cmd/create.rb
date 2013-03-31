@@ -20,13 +20,9 @@ command :create do |verb|
         raise "create doesn't take a search query"
       end
 
-      note = Evernote::EDAM::Type::Note.new
-      # initialize empty content.
-      note.txt_content = ''
-      
-
       edit = Rnote::Edit.new($app.auth)
-      edit.edit_action(note,options.merge(global_options))
+      edit.options(options.merge(global_options))
+      edit.edit_action
 
 
     end

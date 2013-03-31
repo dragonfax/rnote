@@ -124,9 +124,30 @@ Then /^the note named "(.*?)" should be empty$/ do |title|
 end
 
 Then /^the note named "(.*?)" should contain "(.*?)"$/ do |title, content|
-  # can't use substeps here, as i want this to be callable while an interactive command is being run.
+  # can't use aruba here, as i want this to be callable while an interactive command is being run.
   notes = notes_by_title(title)
   assert notes.length > 0
   matching_notes = notes.select { |note| note.content.include?(content) }
-  assert matching_notes.length > 0
+  assert matching_notes.length > 0, 'at least one note with matching content'
+end
+
+Then /^the note named "(.*?)" should eventually contain "(.*?)"$/ do |title, content|
+  # can't use substeps here, as i want this to be callable while an interactive command is being run.
+  time_started = Time.new
+  while true
+    begin
+      step %{the note named "#{title} should contain "#{content}"}
+    rescue MiniTest::Assertion => e
+      time_now = Time.new
+      seconds = time_now - time_started
+      if seconds > @aruba_timeout_seconds
+        puts "timeout exceeded waiting for note with content"
+        raise e
+      end
+    else
+      break
+    end
+    
+    sleep 1
+  end
 end

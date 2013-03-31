@@ -55,12 +55,10 @@ Feature:
     And I type "otest content1"
     # save the changes
     And I type ":w"
-    And I wait 2 seconds
     Then the note named "test note" should contain "test content1"
     # next phase of the test, odd for cucumber tests, I know.
     When I type "otest content2"
     And I type ":w"
-    And I wait 2 seconds
     Then the note named "test note" should contain "test content2"
     When I type ":wq"
     Then the exit status should be 0
