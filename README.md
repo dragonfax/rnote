@@ -82,7 +82,7 @@ $ gem install rnote-0.0.1.gem
 ```
 
 Get yourself a developer token and login using that
-`https://www.evernote.com/api/DeveloperToken.action`
+https://www.evernote.com/api/DeveloperToken.action
 
 `$ rnote login --dev-token 'S=sXXX:U=XXXX:E=XXXXXXXX:C=XXXXXXXX:P=XXXX:A=en-devtoken:V=2:H=XXXXXXXXXXXXXXX'`
 
