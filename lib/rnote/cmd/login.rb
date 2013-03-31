@@ -26,7 +26,7 @@ command :login do |c|
   c.flag [:c,:secret,:'consumer-secret']
   
   c.action do |global_options,options,args|
-		raise unless args.length == 0
+		raise "This command takes no arguments, only options (i.e. --username" unless args.length == 0
 
     if options[:key]
       $app.persister.persist_consumer_key(options[:key])
@@ -54,6 +54,10 @@ command :login do |c|
       end
   
       $app.auth.login_with_password(options[:user],options[:password], options[:sandbox])
+      
+      # test the login with a harmless api call.
+      $app.auth.client.user_store.getUser
+      
       puts "you are now logged in as '#{$app.auth.who}'"
       
     end

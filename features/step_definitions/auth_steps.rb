@@ -22,6 +22,7 @@ When /^I run `(.*?)` with credentials$/ do |arg1|
   arg1.sub!('<password2>', SANDBOX_PASSWORD2)
   arg1.sub!('<consumer-key>', SANDBOX_CONSUMER_KEY)
   arg1.sub!('<consumer-secret>', SANDBOX_CONSUMER_SECRET)
+  arg1.sub!('<dev-token>', SANDBOX_DEVELOPER_TOKEN)
   step "I run `#{arg1}`"
 end
 

@@ -1,3 +1,4 @@
+@announce
 Feature: Authentication
   Verify that you can login and logout of Evernote.
   
@@ -37,6 +38,11 @@ Feature: Authentication
     Given I am logged out
     When I run `rnote logout`
     Then I should not be logged in
+
+  Scenario: Login with developer token
+    Given I am logged out
+    When I run `rnote login --dev-token <dev-token> --sandbox` with credentials
+    Then the exit status should be 0
 
   ## Additional credential options
 
