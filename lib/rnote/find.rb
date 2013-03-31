@@ -66,7 +66,8 @@ module Rnote
         @persister.save_last_search_guids([])
         puts "no notes found"
       else
-        @persister.save_last_search_guids(results.map { |note| note.guid })
+        guids = results.map { |note| note.guid }
+        @persister.save_last_search_guids(guids)
         display_results(results)
       end
     end

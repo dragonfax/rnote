@@ -243,7 +243,7 @@ EOF
       if @auth_cache.respond_to?(method)
         @auth_cache.method(method).call(*args)
       elsif @search_cache.respond_to?(method)
-        @search_cache.method(method).class(*args)
+        @search_cache.method(method).call(*args)
       else
         super
       end

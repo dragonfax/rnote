@@ -3,8 +3,10 @@
 ## Given
 
 Given /^I am logged in as dragonfax_test1$/ do
-  step 'I run `rnote login --user=dragonfax_test1 --password=<password>` with credentials'
-  step 'I should be logged in as "dragonfax_test1"'
+  if `rnote who`.chomp != 'dragonfax_test1'
+    step 'I run `rnote login --user=dragonfax_test1 --password=<password> --consumer-key=<consumer-key> --consumer-secret=<consumer-secret> --sandbox` with credentials'
+    step 'I should be logged in as "dragonfax_test1"'
+  end
 end
 
 Given /^I am logged out$/ do
