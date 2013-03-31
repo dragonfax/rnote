@@ -16,6 +16,7 @@ command :login do |c|
   c.flag [:d,:'dev-token',:'developer-token']
   
   c.desc "use the sandbox environment in lue of the production evernote system."
+  c.default_value :false
   c.switch [:s,:sandbox]
   
   c.desc "provide a consumer key, instead of the included one."
@@ -52,7 +53,7 @@ command :login do |c|
         options[:p] = answer
       end
   
-      $app.auth.login_with_password(options[:u],options[:p], options[:k], options[:c], options[:sandbox])
+      $app.auth.login_with_password(options[:user],options[:password], options[:sandbox])
       puts "you are now logged in as '#{$app.auth.who}'"
       
     end

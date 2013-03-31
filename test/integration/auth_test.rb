@@ -4,6 +4,8 @@ require_relative './secrets'
 require 'rnote'
 require 'minitest/autorun'
 
+raise unless RNOTE_TESTING_OK
+
 module Rnote
 
   describe Auth do

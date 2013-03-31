@@ -1,18 +1,6 @@
 
 require 'yaml'
 
-begin
-  # this file only exists in development
-  # its not included in the gem, 
-  # and thus not found in production (the installed gem)
-  require_relative 'environment'
-rescue LoadError
-  # in production then.
-  RNOTE_HOME ||= ENV['HOME'] + '/.rnote' # should only happen in the installed gem.
-  RNOTE_TESTING_OK = false
-  RNOTE_ENVIRONMENT = :production
-end
-
 AUTH_FILE = RNOTE_HOME + '/auth'
 SEARCH_FILE = RNOTE_HOME + '/search_cache'
 
@@ -156,7 +144,7 @@ EOF
       read_config do |config|
         if config[:sandbox].nil?
           # default to true
-          false
+          true
         else
           config[:sandbox]
         end
@@ -184,6 +172,7 @@ EOF
     end
     
     def persist_sandbox(sandbox)
+      raise if ! sandbox and RNOTE_SANDBOX_ONLY
       modify_config do |config|
         config[:sandbox] = sandbox
       end

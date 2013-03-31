@@ -3,7 +3,7 @@
 ## Given
 
 Given /^I am logged in as dragonfax_test1$/ do
-  step 'I run `rnote login --user=dragonfax_test1 --password=<password>` with password'
+  step 'I run `rnote login --user=dragonfax_test1 --password=<password>` with credentials'
   step 'I should be logged in as "dragonfax_test1"'
 end
 
@@ -14,13 +14,17 @@ end
 
 ## When
 
-When /^I run `(.*?)` with password$/ do |arg1|
-  arg1.sub!('<password>', password)
+When /^I run `(.*?)` with credentials$/ do |arg1|
+  arg1.sub!('<username>', SANDBOX_USERNAME1)
+  arg1.sub!('<password>', SANDBOX_PASSWORD1)
+  arg1.sub!('<password2>', SANDBOX_PASSWORD2)
+  arg1.sub!('<consumer-key>', SANDBOX_CONSUMER_KEY)
+  arg1.sub!('<consumer-secret>', SANDBOX_CONSUMER_SECRET)
   step "I run `#{arg1}`"
 end
 
 When /^I type the password$/ do
-  step "I type \"#{password}\""
+  step "I type \"#{SANDBOX_PASSWORD1}\""
 end
 
 ## Then
