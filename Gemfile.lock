@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rnote (0.0.1)
+    rnote (0.0.2)
       evernote-thrift
       evernote_oauth (~> 0.1.8)
       gli (= 2.5.4)
