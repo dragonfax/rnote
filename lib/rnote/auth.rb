@@ -36,13 +36,25 @@ module Rnote
           logout
         end
       end
+
+      ## Consumer Key and Secret provided in published gem.
+      #
+      # we'll use these if the user doesn't provide their own
+      # we do this check here, instead of in Persister,
+      # so we can verify this is only used in production, not sandbox.
+      #
+
+      consumer_key = @persister.get_consumer_key || ( ! sandbox && PRODUCTION_CONSUMER_KEY )
+      raise 'no consumer key to use, please provide one.' unless consumer_key
+      consumer_secret = @persister.get_consumer_secret || ( ! sandbox && PRODUCTION_CONSUMER_SECRET )
+      raise 'no consumer secret to use, please provide one.' unless consumer_secret
       
       ## Get a user key using these crednetials
       
       # this client isn't authorized, and can only request authorization. no api calls.
       auth_client = EvernoteOAuth::Client.new(
-          consumer_key: @persister.get_consumer_key,
-          consumer_secret: @persister.get_consumer_secret,
+          consumer_key: consumer_key,
+          consumer_secret: consumer_secret,
           sandbox: sandbox
       )
 

@@ -20,32 +20,41 @@ But most verbs will assume a default noun of 'note' so you can cut it short.
 
 `$ rnote find`
 
-**nouns**
+#### Nouns
 * note
 * notebook
 * tag
 
-**verbs**
-* list
+#### Verbs
+
+##### verbs that take nouns
 * find
 * show
 * edit
 * create
 * remove
 * rename
+* list
 
-**Example Commands**
+##### verbs that act alone
+* who - show who you're logged in as
+* login
+* logout
+
+### Example Commands**
 
 ```
+$ rnote login
 $ rnote show note 
 $ rnote edit note <note title or search>
 $ rnote create note
 $ rnote remove note <note title or search>
+$ rnote logout
 ```
 
-If any command finds multiple matching notes, it will ask to which note you refer.
+### Interactively Selecting a Noun (Note)
 
-You can also do a search before such a command, and then specify a search result item to operate on.
+If any command finds multiple matching notes, it will ask to which note you refer. You can also do a search before such a command, and then specify a search result item to operate on.
 
 ```
 $ rnote find <search string>
@@ -72,11 +81,25 @@ This project is not ready for primetime. I'm using it myself daily for personal 
 Try it out
 ----
 
-### Install the gem
+### Via gem (the easy way)
 
 ```
 $ gem install rnote
+$ rnote login
 ```
+
+Then your ready to go.
+
+```
+$ rnote find
+$ rnote find some string
+$ rnote create --set-title "new note title"
+$ rnote edit new note title
+```
+
+
+Development
+----
 
 ### Install it Manually
 
@@ -86,32 +109,33 @@ If you're playing around with the source, you can still build a gem and install 
 $ git clone git@github.com:dragonfax/rnote.git
 $ cd rnote
 $ gem build rnote.gemspec
-$ gem install rnote-0.0.1.gem
+$ gem install rnote-???.gem
+$ cd
+$ rnote login
+$ rnote find
 ```
 
-Of course you don't have to install it to use it. But your only able to access the Evernote sandbox when your running right out of the source tree. See the Auth Safeguards below.
+Of course you don't have to install it as a gem to use it. But your only able to access the Evernote sandbox when your running right out of the source tree. This is a safety measure. See the Auth Safeguards below.
 
 ```
 $ cd rnote
+# accesses sandbox only
 $ bundle exec rnote find
 ```
 
-### Login and Get Going
+Login Options
+---
+
+### Developer Token
 
 Get yourself a developer token and login using that
 https://www.evernote.com/api/DeveloperToken.action
 
 `$ rnote login --dev-token 'S=sXXX:U=XXXX:E=XXXXXXXX:C=XXXXXXXX:P=XXXX:A=en-devtoken:V=2:H=XXXXXXXXXXXXXXX'`
 
-Then your ready to go.
+### Username/Password
 
-```
-$ rnote find some string
-$ rnote create --set-title "new note title"
-$ rnote edit new note title
-```
-
-You could login with your username and password instead, but you'll also have to get your hands on a consumer key that works in production. That requires a bit more effort.
+You could login with your username and password instead, but you'll also have to get your hands on a consumer key. That requires a bit more effort.
 
 
 Testing

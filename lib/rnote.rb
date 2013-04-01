@@ -14,6 +14,15 @@ rescue LoadError
   RNOTE_SANDBOX_ONLY = false
 end
 
+# load optional production consumer key
+begin
+  require_relative 'rnote/consumer'
+rescue LoadError
+  # ignore
+  PRODUCTION_CONSUMER_KEY = nil
+  PRODUCTION_CONSUMER_SECRET = nil
+end
+
 require 'rnote/version'
 require 'rnote/converter'
 require 'rnote/persister'
