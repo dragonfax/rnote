@@ -3,7 +3,7 @@ Feature:
   Create and manipulate notes in Evernote.
 
   Background:
-    Given I am logged in as dragonfax_test1
+    Given I am logged in as <username>
     And I have 0 notes
     
   Scenario: Show note
