@@ -167,7 +167,7 @@ module Rnote
   
       ENV['EDITOR'] ||= 'vim'
   
-      file = Tempfile.new(['rnote','md'])
+      file = Tempfile.new(['rnote','.txt'])
       begin
   
         # fill the tempfile with the yaml stream
