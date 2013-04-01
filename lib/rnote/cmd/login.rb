@@ -42,18 +42,21 @@ command :login do |c|
       puts "login successful using developer key"
     else
       # then fall back to using a username and password
+
+      user = options[:user]
+      password = options[:password]
       
-      if not options[:u]
+      if user.nil?
         answer = ask("Enter your username:  ")
-        options[:u] = answer
+        user = answer.chomp
       end
   
-      if not options[:p]
+      if password.nil?
         answer = ask("Enter your password:  ") { |q| q.echo = 'x' }
-        options[:p] = answer
+        password = answer.chomp
       end
   
-      $app.auth.login_with_password(options[:user],options[:password], options[:sandbox])
+      $app.auth.login_with_password(user,password, options[:sandbox])
       
       # test the login with a harmless api call.
       $app.auth.client.user_store.getUser
