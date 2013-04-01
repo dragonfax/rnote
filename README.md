@@ -67,7 +67,7 @@ NOTE: no 'pay' features are supported or re-implemented by this interface.
 Status
 ====
 
-This project is not ready for primetime. I'm using it myself daily for personal note taking, but it still has a lot of holes in its interface.  Its not available as a gem as its not ready for version 1.0 or regular consumptions yet.
+This project is not ready for primetime. I'm using it myself daily for personal note taking, but it still has a lot of holes in its interface.
 
 Try it out
 ----
