@@ -72,7 +72,15 @@ This project is not ready for primetime. I'm using it myself daily for personal 
 Try it out
 ----
 
-Install it as a local gem. Its not on rubygems yet.
+### Install the gem
+
+```
+$ gem install rnote
+```
+
+### Install it Manually
+
+If you're playing around with the source, you can still build a gem and install that.
 
 ```
 $ git clone git@github.com:dragonfax/rnote.git
@@ -80,6 +88,15 @@ $ cd rnote
 $ gem build rnote.gemspec
 $ gem install rnote-0.0.1.gem
 ```
+
+Of course you don't have to install it to use it. But your only able to access the Evernote sandbox when your running right out of the source tree. See the Auth Safeguards below.
+
+```
+$ cd rnote
+$ bundle exec rnote find
+```
+
+### Login and Get Going
 
 Get yourself a developer token and login using that
 https://www.evernote.com/api/DeveloperToken.action
