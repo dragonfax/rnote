@@ -121,7 +121,7 @@ EOF
   end
   
   def summarize
-    self.txt_content[0..30]
+    self.txt_content.strip.gsub(/\s+/,' ')[0..100]
   end
 
 end

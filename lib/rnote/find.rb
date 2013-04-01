@@ -76,7 +76,7 @@ module Rnote
     def display_results(notes)
       inc = 1
       notes.each do |note|
-        puts "#{inc}: #{note.title} - #{note.tagNames.join(', ')}\n#{note.summarize}\n"
+        puts "#{inc}: #{note.title} - #{note.tagNames.join(', ')}\n#{note.summarize}\n\n"
         inc += 1
       end
     end
