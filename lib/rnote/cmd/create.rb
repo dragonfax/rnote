@@ -6,10 +6,12 @@ require 'rnote/edit'
 include GLI::App
 
 
-desc 'create a note and launch the editor for it'
+d 'create a new note'
+long_desc 'create a new note and, optionally, launch an editor to provide its content'
 command :create do |verb|
-  verb.command :note do |noun|
 
+  d 'create a new note'
+  verb.command :note do |noun|
 
     Rnote::Edit.include_set_options(noun)
     Rnote::Edit.include_editor_options(noun)

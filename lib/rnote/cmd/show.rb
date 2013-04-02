@@ -4,10 +4,11 @@ require 'rnote/find'
 include GLI::App
 
 
-desc 'output notes to the console'
+d 'show note content'
+long_desc "output a note's content to the console."
 command :show do |verb|
 
-  verb.desc 'find and output notes to the console'
+  verb.desc "output a note's content"
   verb.command :note do |noun|
 
     Rnote::Find.include_search_options(noun)

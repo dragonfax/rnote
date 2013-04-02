@@ -6,10 +6,11 @@ include GLI::App
 
 
 
-desc 'remove an item from evernote'
-arg_name 'Describe arguments to remove here'
-command :remove do |verb| 
-  
+d 'remove a note'
+long_desc "Remove a note, but don't expunge it. The note stays in the users Trash"
+command :remove do |verb|
+
+  verb.desc 'remove a note'
   verb.command :note do |noun|
     
     Rnote::Find.include_search_options(noun)

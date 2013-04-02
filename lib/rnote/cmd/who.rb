@@ -1,7 +1,8 @@
 
 include GLI::App
 
-desc 'see which user you are logged in as'
+d 'which user is logged in'
+long_desc 'see what username is logged in, or if your using a developer token instead of a username.'
 command :who do |c|
   c.action do |global_options,options,args|
     raise unless args.length == 0

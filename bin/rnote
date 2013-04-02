@@ -6,7 +6,7 @@ include GLI::App
 
 program_desc 'Evernote Command Line'
 
-# version Rnote::VERSION
+version Rnote::VERSION
 
 desc 'prompt for input and run an editor when necessary'
 default_value true

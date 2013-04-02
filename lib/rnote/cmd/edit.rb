@@ -4,10 +4,12 @@ require 'rnote/find'
 
 include GLI::App
 
-
-desc 'Describe edit here'
-arg_name 'Describe arguments to edit here'
+# TODO why doesn't 'desc' work here instead of 'd'. What is over-riding it?
+d 'edit/update a note'
+long_desc 'Edit/update an existing note, usually by launching an editor.'
 command :edit do |verb|
+
+  verb.desc "edit a note"
 
   verb.command :note do |noun|
 

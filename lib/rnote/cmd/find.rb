@@ -4,9 +4,15 @@ require 'rnote/find'
 include GLI::App
 
 
-desc 'search for notes/tags/notebooks'
+d 'search for notes'
+long_desc <<EOF
+Provide a query and find matching notes.   Provides a short summary of each note in the result.
+
+You can run this command before running other commands that require a note to be selected, such as 'edit', or 'remove'. And then specify the result number on the next command line.
+EOF
 command :find do |verb|
 
+  verb.desc 'find notes'
   verb.command :note do |noun|
 
     Rnote::Find.include_search_options(noun)

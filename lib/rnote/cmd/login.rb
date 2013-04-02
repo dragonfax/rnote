@@ -3,7 +3,8 @@ require 'highline/import'
 
 include GLI::App
 
-desc 'provide rnote credentials'
+d 'login to evernote'
+long_desc 'Provide credentials and log a user into evernote. The users password is never saved, but an auth token will be.'
 command :login do |c|
   
   c.desc "username"

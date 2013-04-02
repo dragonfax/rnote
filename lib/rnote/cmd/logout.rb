@@ -11,7 +11,8 @@ but won't forget about a consumer key, as that by itself is not considered a log
 
 =end
 
-desc 'log user out of rnote'
+d 'logout user'
+long_desc "Log a user out of evernote. This forgets any credential information that may have been cached. currently this does not revoke the token though. It simply forgets what the token was."
 command :logout do |c|
   c.action do |global_options,options,args|
     raise unless args.length == 0
