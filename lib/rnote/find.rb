@@ -101,7 +101,7 @@ module Rnote
         # no search options, one argument, and its a small number
         # they are asking to pick from the last search results
         guids = @persister.get_last_search_guids
-        guid = guids[args[0].to_i] # the chosen note
+        guid = guids[args[0].to_i - 1] # the chosen note
         note = get_full_note(guid)
         results = [note] # fake a result set with it.
       else
