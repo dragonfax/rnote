@@ -7,7 +7,12 @@ include GLI::App
 
 
 d 'create a new note'
-long_desc 'create a new note and, optionally, launch an editor to provide its content'
+long_desc <<EOF
+Create a new note and, optionally, launch an editor to provide its content
+
+Unlike most commands, the command line arguments aren't used in a search.
+Instead any command line arguments provided are used for the title of the new note.
+EOF
 command :create do |verb|
 
   d 'create a new note'
@@ -19,7 +24,10 @@ command :create do |verb|
     noun.action do |global_options,options,args|
 
       if args.length > 0
-        raise "create doesn't take a search query"
+        if options[:'set-title']
+          raise "You can't use both --set-title and command line arguments at the same time to set the title of the new note."
+        end
+        options[:'set-title'] = args.join(' ')
       end
 
       edit = Rnote::Edit.new($app.auth)
