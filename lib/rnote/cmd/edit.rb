@@ -21,7 +21,7 @@ command :edit do |verb|
 
       find = Rnote::Find.new($app.auth,$app.persister)
       note = find.find_note(options.merge(global_options),args)
-
+      
       edit = Rnote::Edit.new($app.auth)
       edit.options(options.merge(global_options))
       edit.note(note)

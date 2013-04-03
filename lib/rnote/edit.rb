@@ -1,6 +1,7 @@
 
 require 'highline'
 require 'nokogiri'
+require 'tempfile'
 
 class WaitPidTimeout
   
@@ -162,10 +163,74 @@ module Rnote
       end
   
     end
+    
+    # output both forms to a file, and run "diff | less"
+    def show_diff(original,altered)
+      
+      file1 = Tempfile.new('rnote')
+      file2 = Tempfile.new('rnote')
+      begin
+        
+        file1.write(original)
+        file1.close
+        
+        file2.write(altered)
+        file2.close
+        
+        system("diff #{file1.path} #{file2.path} | less")
+          
+        raise "User cnacelled due to lost content." unless agree("Continue editing note?  ")
+          
+      ensure
+        file1.unlink
+        file2.unlink
+      end
+    end
+    
+    # check if we lose content/formating when converting the note
+    # and if so ask the user if they want to continue.
+    def check_for_lost_content
+      
+      converted_content = @note.class.txt_to_enml(@note.class.enml_to_txt(@note.content))
+      
+      if @note.content != converted_content
+        puts "Some content or formatting may be lost in the note due to editing format conversion."
+        reply_continue = ask("Continue editing the note? (yes/no/diff) ") { |q|
+          q.validate = /\A(y|n|d|q|e|c|yes|no|cancel|quit|exit|diff)\Z/i
+          q.responses[:not_valid] = 'Please enter "yes", "no", "diff", or "cancel".'
+          q.responses[:ask_on_error] = :question
+        }
+        
+        case reply_continue.downcase
+          when 'y'
+            # nothing, continue
+          when 'yes'
+            # nothing, continue
+          when 'n'
+            raise "User cancelled due to lost content."
+          when 'no'
+            raise "User cancelled due to lost content."
+          when 'cancel'
+            raise "User cancelled due to lost content."
+          when 'quit'
+            raise "User cancelled due to lost content."
+          when 'exit'
+            raise "User cancelled due to lost content."
+          when 'diff'
+            show_diff(@note.content,converted_content)
+          else
+            raise
+        end
+        
+        
+      end
+    end
   
     def editor
   
       ENV['EDITOR'] ||= 'vim'
+      
+      check_for_lost_content
   
       file = Tempfile.new(['rnote','.txt'])
       begin
