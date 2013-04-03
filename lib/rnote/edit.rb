@@ -225,6 +225,29 @@ module Rnote
         
       end
     end
+    
+    def md5(filename)
+      # TODO sloppy, switch with non shell command
+      `cat #{filename} | md5`.chomp
+    end
+    
+    # has the file changed since the last time we checked.
+    def has_file_changed(file)
+      
+      @last_mtime ||= nil
+      @last_md5 ||= nil
+      
+      this_mtime = File.mtime(file.path)
+      this_md5 = md5(file.path)
+      
+      changed = this_mtime != @last_mtime && this_md5 != @last_md5
+      
+      @last_mtime = this_mtime
+      @last_md5 = this_md5
+      
+      changed
+    end
+    
   
     def editor
   
@@ -244,7 +267,7 @@ module Rnote
         successful_edit = false
         until successful_edit do
   
-          last_mtime = File.mtime(file.path)
+          has_file_changed(file) # initialize the file change tracking.
   
           # run editor in background
           pid = fork do
@@ -265,31 +288,34 @@ module Rnote
               # timeout exceeded
   
               # has the file changed?
-              this_mtime = File.mtime(file.path)
-              if this_mtime != last_mtime
+              if has_file_changed(file)
                 # protect the running editor from our failures.
                 begin
                   update_note_from_file(file.path)
                 rescue Exception => e
                   $stderr.puts "rnote: an error occured while updating the note: #{e.message}"
                 end
-                last_mtime = this_mtime
               end
             end
           end
   
           # one last update of the note
           # this time we care if there are errors
-          begin
-            update_note_from_file(file.path)
-          rescue Exception => e
-  
-            puts "There was an error while uploading the note"
-            puts e.message
-            puts e.backtrace.join("\n    ")
-  
-            successful_edit = ! agree("Return to editor? (otherwise changes will be lost)  ")
+          if has_file_changed(file)
+            begin
+              update_note_from_file(file.path)
+            rescue Exception => e
+    
+              puts "There was an error while uploading the note"
+              puts e.message
+              puts e.backtrace.join("\n    ")
+    
+              successful_edit = ! agree("Return to editor? (otherwise changes will be lost)  ")
+            else
+              successful_edit = true
+            end
           else
+            # no changes to file, no need to save.
             successful_edit = true
           end
   
