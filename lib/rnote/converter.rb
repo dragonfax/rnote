@@ -110,6 +110,11 @@ EOF
 
     enml = self.class.txt_to_enml(markdown)
     attributes_hash = YAML.load(attributes_yaml)
+    
+    # process tag names
+    # allow for comma separated tag list
+    tag_names = attributes_hash['tagNames']
+    tag_names = tag_names.split(/\s*,\s*/) if tag_names.instance_of?(String)
 
     self.title = attributes_hash['title']
     self.tagNames = attributes_hash['tagNames']
