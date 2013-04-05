@@ -15,17 +15,26 @@ command :show do |verb|
     
     noun.desc 'include title in the output'
     noun.default_value true
-    noun.switch :'include-title', :'inc-title'
+    noun.switch :'include-title', :'inc-title', :'output-title', :'show-title'
+    
+    noun.desc 'which format to output? (txt or enml)'
+    noun.default_value 'txt'
+    noun.flag :format
 
     noun.action do |global_options,options,args|
 
       find = Rnote::Find.new($app.auth,$app.persister)
       note = find.find_note(options.merge(global_options),args)
       
-      content = note.txt_content
       
       puts note.title if options[:'include-title']
-      puts content
+      if options[:format] == 'txt'
+        puts note.txt_content
+      elsif options[:format] == 'enml'
+        puts note.content
+      else
+        raise "Unknown outoput format specified."
+      end
 
     end
 

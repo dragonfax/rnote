@@ -1,5 +1,4 @@
 
-
 require 'minitest/autorun'
 require 'rnote/converter'
 require 'nokogiri'
@@ -8,19 +7,22 @@ module Rnote
 
   describe 'simple document conversions' do
 
-    describe 'enml2md' do
+    # first test specific directions
+    # if we have conversion issues, I'll add tests here to nail down whats going wrong.
 
-      it 'converts a <pre> tag to md verbatim' do
+    describe 'enml2txt' do
+
+      it 'converts a <pre> tag to txt verbatim' do
         enml = <<EOF
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note><pre>test1</pre></en-note>
+<en-note><div>test1<br/></div></en-note>
 EOF
-        assert_equal "test1",Evernote::EDAM::Type::Note.enml_to_txt(enml)
+        assert_equal "test1\n",Evernote::EDAM::Type::Note.enml_to_txt(enml)
       end
 
       it 'fails if receives invalid enml' do
-        assert_raises(Evernote::EDAM::Error::InvalidXmlError) do
+        assert_raises(RuntimeError) do
           Evernote::EDAM::Type::Note.enml_to_txt('invalid enml')
         end
       end
@@ -35,7 +37,7 @@ EOF
 
       it 'failed with an empty document' do
 
-        assert_raises(Evernote::EDAM::Error::InvalidXmlError) do
+        assert_raises(RuntimeError) do
           Evernote::EDAM::Type::Note.enml_to_txt('')
         end
 
@@ -51,10 +53,10 @@ EOF
 
     end
 
-    describe 'md2enml' do
+    describe 'txt2enml' do
 
-      it 'fails if it receives xml instead of md' do
-        assert_raises(Evernote::EDAM::Error::InvalidMarkdownError) do
+      it 'fails if it receives xml instead of txt' do
+        assert_raises(RuntimeError) do
           Evernote::EDAM::Type::Note.txt_to_enml(<<EOF)
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
@@ -78,6 +80,10 @@ EOF
 
     describe 'combined, encode + decode' do
 
+      # this is how I really like to test the formatting conversion.
+      # it tests both directions in one go.
+      # and verifies we reverse the conversion exactly.
+
       it 'passes through simple text (txt), with no markup' do
         assert_equal('simple text', Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml('simple text')))
       end
@@ -86,10 +92,65 @@ EOF
         enml = Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(<<EOF))
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note><pre>simple text</pre></en-note>
+<en-note><div>simple text<br/></div></en-note>
 EOF
         assert Nokogiri::XML::Document.parse(enml)
         assert enml.include?('simple text')
+      end
+
+      it 'multiple lines, ends with a newline' do
+        txt = <<EOF
+line 1
+a second line
+even a third
+EOF
+        assert txt.end_with? "\n"
+        assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)))
+      end
+
+      it "multiple lines, doesn't end with a newline" do
+        txt = <<EOF
+line 1
+a second line
+even a third
+EOF
+        txt << 'and a final line with no newline'
+        refute txt.end_with? "\n"
+        assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)))
+      end
+
+      it 'whitespace in txt is preserved' do
+        assert_equal('  simple text', Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml('  simple text')))
+      end
+
+      it 'todo item (checked) is preserved' do
+        assert_equal('[X] simple text', Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml('[X] simple text')))
+      end
+
+      it 'todo item (unchecked) is preserved' do
+        assert_equal('[ ] simple text', Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml('[ ] simple text')))
+      end
+
+      it 'pre tag is converted properly, but not preserved' do
+        enml_with_pre = <<EOF
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note>
+<pre>Here is some pre text
+  with some whitespace
+and some new lines
+</pre></en-note>
+EOF
+        enml_without_pre = <<EOF
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note>
+<div>Here is some pre text<br/></div>
+<div>  with some whitespace<br/></div>
+<div>and some new lines<br/></div>
+</en-note>
+EOF
+        assert_equal(enml_without_pre, Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(enml_with_pre)))
       end
 
     end
@@ -98,10 +159,13 @@ EOF
 
   describe Evernote::EDAM::Type::Note do
 
+    # test that we've instrumented the Note type properly.
+
     it 'passes through simple yaml_stream, with no markup' do
       yaml_stream = <<EOF
 ---
 title: blah
+tagNames: 
 
 ---
 simple text
@@ -116,7 +180,7 @@ EOF
       enml = <<EOF
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note><pre>simple text</pre></en-note>
+<en-note><div>simple text<br/></div></en-note>
 EOF
 
       note = Evernote::EDAM::Type::Note.new

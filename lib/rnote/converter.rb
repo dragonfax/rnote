@@ -4,62 +4,129 @@ require 'yaml'
 
 require 'evernote-thrift'
 
-module Evernote::EDAM::Error
 
-  # converting between text formats and enml
-  #
-  # we have two types of conversion
-  #
-  # simple,
-  # single document conversion.
-  # which is enml <=> txt
-  #
-  # then our own additional wrappers we put on top of those 2 document types
-  # adding metadata to them.
-  # yaml_stream <=> notes attributes
-  # content is just considered an 'attribute' in the latter
-  #
-  # the yaml_stream is just a string
-  # the note attributes get its own class and thats where we stick the conversion routines.
-  
-  class InvalidFormatError < Exception
-  end
-  
-  class InvalidXmlError < InvalidFormatError
+# converting between text formats and enml
+#
+# we have two types of conversion
+#
+# simple,
+# single document conversion.
+# which is enml <=> txt
+#
+# then our own additional wrappers we put on top of those 2 document types
+# adding metadata to them.
+# yaml_stream <=> notes attributes
+# content is just considered an 'attribute' in the latter
+#
+# the yaml_stream is just a string
+# the note attributes get its own class and thats where we stick the conversion routines.
+
+class Evernote::EDAM::Type::Note
+
+  # Nokogiri SAX parser
+  class EnmlDocument < Nokogiri::XML::SAX::Document
     
-    attr_reader :xml
+    attr_accessor :txt, :in_pre
+
+    def initialize
+      @txt = ''
+      super
+    end
     
-    def initialize(message, xml=nil)
-      @xml = xml
-      super(message)
+    def characters string
+      # Evernote seems to consider whitespace inside a div significant.
+      # but puts a newline after each div as well.
+      # I'm not sure what their intention is. But rather than include all these extra newlines (on top of the <br/>s)
+      # I cheap out and just remove any newlines I see in the content.
+      # unless its in a pre tag
+      if self.in_pre
+        @txt << string
+      else
+        @txt << string.gsub("\n",'')
+      end
+    end
+    
+    def start_element name, attrs = []
+      if name == 'en-todo'
+        if Hash[attrs]['checked'] == 'true'
+          @txt << '[X]'
+        else
+          @txt << '[ ]'
+        end
+      elsif name == 'pre'
+        # these don't stack
+        self.in_pre = true
+      end
+    end
+    
+    def end_element name
+      if name == 'br'
+        @txt << "\n"
+      elsif name == 'pre'
+        self.in_pre = false
+      end
+    end
+    
+    def cdata_block string
+      @txt << string
     end
   end
-  
-end
-  
-class Evernote::EDAM::Type::Note
-  
+
+
   def self.enml_to_txt(enml)
-    document =  Nokogiri::XML::Document.parse(enml)
-    raise Evernote::EDAM::Error::InvalidXmlError.new("invalid xml",enml) unless document.root
-    pre_node = document.root.xpath('pre').first
-    if pre_node
-      pre_node.children.to_ary.select { |child| child.text? }.map { |child| child.to_s }.join('')
-    else
-      document.root.xpath("//text()").text
-    end  
+    raise 'not given xml' if ! enml.start_with? '<?xml'
+
+    sax_document = EnmlDocument.new
+    parser = Nokogiri::XML::SAX::Parser.new(sax_document)
+    parser.parse(enml)
+    
+    enml = sax_document.txt
+
+    enml
   end
   
   def self.txt_to_enml(txt)
-    if txt.start_with? '<?xml'
-      raise Evernote::EDAM::Error::InvalidFormatError.new('given xml instead of txt')
+    raise 'given xml instead of txt' if txt.start_with? '<?xml'
+    
+    # escape any angle brackets
+    txt.gsub!('<','&lt;')
+    txt.gsub!('>','&gt;')
+    
+    # replace todo items 
+    txt.gsub!('[ ]','<en-todo checked="false"/>')
+    txt.gsub!('[X]','<en-todo checked="true"/>')
+    
+    # split by newlines, do the swap to div/br
+    # an empty string at the end of the split means there was a newline on the last real line.
+    lines = txt.split("\n",-1)
+    if txt == ""
+      # special case
+      lines = ['']
+    else
+      if lines.length == 0
+        raise
+      end
     end
+    last_line = lines.pop
+    xhtml = lines.map { |string|
+      "<div>#{string}<br/></div>\n"
+    }.join('')
+    if last_line == ""
+      # last real line in txt had a newline
+      # this was perofrmed by the map above
+      # our deed is done
+    else
+      # this is the last real line of txt
+      # and it has no newline
+      # so we must convert it specially
+      xhtml << "<div>#{last_line}</div>\n"
+    end
+      
     <<EOF
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
 <en-note>
-<pre>#{txt}</pre>
-</en-note>
+#{xhtml}</en-note>
 EOF
   end
   
