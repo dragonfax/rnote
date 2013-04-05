@@ -22,7 +22,7 @@ end
 def create_note(title,content='')
   note = Evernote::EDAM::Type::Note.new
   note.title = title
-  note.markdown_content = content
+  note.txt_content = content
   client.note_store.createNote(note)
 end
 
@@ -46,8 +46,8 @@ Given /^that I have (\d+ notes?) named "([^"]+?)" with content "([^"]*?)"$/ do |
   
   # set content on any kept notes. if necessary
   notes.each do |note|
-    if note.markdown_content != content
-      note.markdown_content = content
+    if note.txt_content != content
+      note.txt_content = content
       client.note_store.updateNote(note)
     end
   end
@@ -109,7 +109,7 @@ Then /^the note named "(.*?)" should be empty$/ do |title|
   notes = notes_by_title(title)
   assert_equal 1,notes.length
   note = notes.first
-  assert_equal '',note.markdown_content
+  assert_equal '',note.txt_content
 end
 
 Then /^the note named "(.*?)" should contain "(.*?)"$/ do |title, content|

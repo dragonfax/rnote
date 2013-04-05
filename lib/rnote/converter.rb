@@ -12,7 +12,7 @@ module Evernote::EDAM::Error
   #
   # simple,
   # single document conversion.
-  # which is enml <=> markdown
+  # which is enml <=> txt
   #
   # then our own additional wrappers we put on top of those 2 document types
   # adding metadata to them.
@@ -35,32 +35,9 @@ module Evernote::EDAM::Error
     end
   end
   
-  class InvalidMarkdownError < InvalidFormatError
-    def initialize(message, markdown=nil)
-      @markdown = markdown
-      super(message)
-    end
-  end
-  
 end
   
 class Evernote::EDAM::Type::Note
-  
-  def self.enml_to_markdown(enml)
-    enml_to_txt(enml)
-  end
-
-  def self.markdown_to_enml(markdown)
-    txt_to_enml(markdown)
-  end
-  
-  def markdown_content=(markdown_content)
-    self.content = self.class.markdown_to_enml(markdown_content)
-  end
-  
-  def markdown_content
-    self.class.enml_to_markdown(content)
-  end
   
   def self.enml_to_txt(enml)
     document =  Nokogiri::XML::Document.parse(enml)
@@ -75,7 +52,7 @@ class Evernote::EDAM::Type::Note
   
   def self.txt_to_enml(txt)
     if txt.start_with? '<?xml'
-      raise Evernote::EDAM::Error::InvalidMarkdownError.new('given xml instead of txt')
+      raise Evernote::EDAM::Error::InvalidFormatError.new('given xml instead of txt')
     end
     <<EOF
 <?xml version='1.0' encoding='utf-8'?>
@@ -99,16 +76,16 @@ EOF
   # Its just a string, but its composed of 2 parts. the note attributes and the note content.
   #
   # 1. a small yaml document with the note attributes as a hash.
-  # 2. followed by the note content as markdown
+  # 2. followed by the note content as txt
   def yaml_stream=(yaml_stream)
 
     m = yaml_stream.match /^(---.+?---\n)(.*)$/m
     raise "failed to parse yaml stream\n#{yaml_stream}" unless m
 
     attributes_yaml = m[1]
-    markdown = m[2]
+    txt = m[2]
 
-    enml = self.class.txt_to_enml(markdown)
+    enml = self.class.txt_to_enml(txt)
     attributes_hash = YAML.load(attributes_yaml)
     
     # process tag names
