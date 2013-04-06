@@ -26,7 +26,7 @@ class Evernote::EDAM::Type::Note
   # Nokogiri SAX parser
   class EnmlDocument < Nokogiri::XML::SAX::Document
     
-    attr_accessor :txt, :in_pre
+    attr_accessor :txt
 
     def initialize
       @txt = ''
@@ -39,11 +39,7 @@ class Evernote::EDAM::Type::Note
       # I'm not sure what their intention is. But rather than include all these extra newlines (on top of the <br/>s)
       # I cheap out and just remove any newlines I see in the content.
       # unless its in a pre tag
-      if self.in_pre
-        @txt << string
-      else
-        @txt << string.gsub("\n",'')
-      end
+      @txt << string
     end
     
     def start_element name, attrs = []
@@ -53,23 +49,9 @@ class Evernote::EDAM::Type::Note
         else
           @txt << '[ ]'
         end
-      elsif name == 'pre'
-        # these don't stack
-        self.in_pre = true
       end
     end
     
-    def end_element name
-      if name == 'br'
-        @txt << "\n"
-      elsif name == 'pre'
-        self.in_pre = false
-      end
-    end
-    
-    def cdata_block string
-      @txt << string
-    end
   end
 
 
