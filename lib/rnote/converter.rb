@@ -112,12 +112,30 @@ class Evernote::EDAM::Type::Note
 EOF
   end
   
-  def txt_content=(txt_content)
-    self.content = self.class.txt_to_enml(txt_content)
+  def self.enml_to_format(format,enml)
+    case format
+      when 'enml'
+        enml
+      when 'txt'
+        enml_to_txt(enml)
+      else 
+        raise
+    end
+  end
+  
+  def self.format_to_enml(format,formatted_content)
+    case format
+      when 'enml'
+        enml
+      when 'txt'
+        txt_to_enml(formatted_content)
+      else
+        raise
+    end
   end
   
   def txt_content
-    self.class.enml_to_txt(content)
+    self.class.enml_to_format('txt',self.content)
   end
   
   # The yaml stream is what we give to the user to edit in their editor
@@ -126,7 +144,7 @@ EOF
   #
   # 1. a small yaml document with the note attributes as a hash.
   # 2. followed by the note content as txt
-  def yaml_stream=(yaml_stream)
+  def set_yaml_stream(format,yaml_stream)
 
     m = yaml_stream.match /^(---.+?---\n)(.*)$/m
     raise "failed to parse yaml stream\n#{yaml_stream}" unless m
@@ -134,7 +152,7 @@ EOF
     attributes_yaml = m[1]
     txt = m[2]
 
-    enml = self.class.txt_to_enml(txt)
+    enml = self.class.format_to_enml(format,txt)
     attributes_hash = YAML.load(attributes_yaml)
     
     # process tag names
@@ -147,8 +165,8 @@ EOF
     self.content = enml
   end
   
-  def yaml_stream
-    YAML.dump({ 'title' => title, 'tagNames' => tagNames }) + "\n---\n" + self.class.enml_to_txt(content)
+  def yaml_stream(format)
+    YAML.dump({ 'title' => title, 'tagNames' => tagNames }) + "\n---\n" + self.class.enml_to_format(format,content)
   end
   
   def summarize

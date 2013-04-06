@@ -78,7 +78,7 @@ module Rnote
     def initialize(auth)
       @auth = auth
       @note = Evernote::EDAM::Type::Note.new
-      @note.txt_content = '' # for creating new notes.
+      @note.content = @note.class.format_to_enml('txt','') # for creating new notes.
       @last_saved_note = Evernote::EDAM::Type::Note.new
     end
   
@@ -95,6 +95,10 @@ module Rnote
       noun.desc 'open an interactive editor to modify the note'
       noun.default_value true
       noun.switch :editor
+      
+      noun.desc 'which format do you want to edit the note in? default is "txt", other option is "enml"'
+      noun.default_value 'txt'
+      noun.flag :format
     end
   
     def Edit.has_set_options(options)
@@ -105,6 +109,8 @@ module Rnote
       @options = options
       @use_editor = options[:editor]
       @watch_editor = options[:watch]
+      @format = options[:format]
+      raise "format #{@format} not known" unless %w{txt enml}.include?(@format)
     end
     
     def note(note)
@@ -191,9 +197,10 @@ module Rnote
     # and if so ask the user if they want to continue.
     def check_for_lost_content
       
-      converted_content = @note.class.txt_to_enml(@note.class.enml_to_txt(@note.content))
+      converted_content = @note.class.enml_to_format(@format, @note.content)
+      unconverted_content = @note.class.format_to_enml(@format, converted_content)
       
-      if @note.content != converted_content
+      if @note.content != unconverted_content
         puts "Some content or formatting may be lost in the note due to editing format conversion."
         reply_continue = ask("Continue editing the note? (yes/no/diff) ") { |q|
           q.validate = /\A(y|n|d|q|e|c|yes|no|cancel|quit|exit|diff)\Z/i
@@ -255,11 +262,11 @@ module Rnote
       
       check_for_lost_content
   
-      file = Tempfile.new(['rnote','.txt'])
+      file = Tempfile.new(['rnote','.' + @format])
       begin
   
         # fill the tempfile with the yaml stream
-        yaml_stream = @note.yaml_stream
+        yaml_stream = @note.yaml_stream(@format)
         file.write(yaml_stream)
         file.close()
   
@@ -330,7 +337,7 @@ module Rnote
     def update_note_from_file(path)
       
       yaml_stream = File.open(path,'r').read
-      @note.yaml_stream = yaml_stream
+      @note.set_yaml_stream(@format,yaml_stream)
       
       save_note
     end
