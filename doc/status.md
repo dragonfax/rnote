@@ -34,3 +34,24 @@ TODO
 * [ ] additional format options (only txt for now, and markdown isn't really implemented)
 * [ ] the entire tool is too slow
 * [ ] improve search result display formating
+
+
+### Verb x Noun Matrix
+
+What completed so far.
+
+<table>
+
+<tr><td></td>        <th>note</th>    <th>notebook</th> <th>tag</th> </tr>
+
+<tr><th>find</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
+<tr><th>show</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
+<tr><th>edit</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
+<tr><th>create</th>  <td>X</td>       <td></td>         <td></td> </tr>
+<tr><th>remove</th>  <td></td>        <td></td>         <td></td> </tr>
+<tr><th>rename</th>  <td></td>        <td></td>         <td></td> </tr>
+<tr><th>list</th>    <td></td>        <td></td>         <td></td> </tr>
+
+</table>
+
+

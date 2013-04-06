@@ -36,7 +36,20 @@ But most verbs will assume a default noun of 'note' so you can cut it short.
 * login
 * logout
 
-### Example Commands**
+### Formats
+
+When showing, creating or editing a note, you can choose the format you want to edit it in.
+
+ENML is evernotes native format. Its a subset of xhtml. Formatting and content can be lots when editing in a simpler format such as 'txt'.
+
+##### known formats
+* txt
+* enml
+
+##### coming soon
+* markdown
+
+### Example Commands
 
 ```
 $ rnote login
@@ -59,10 +72,14 @@ $ rnote edit 3
 ```
 
 
-TODO
+Old Documentation
 ====
 
-This is what is unimplemented. As it is finished, feature tests are created for it.
+Here is the original interface spec. Most of this is, as yet, unimplemented. 
+
+As it is finished, feature tests are created for it.
+
+**TODO:** What does work needs to be merged into the description and examples. above.
 
 describe "create note"
 
