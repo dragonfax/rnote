@@ -23,33 +23,64 @@ require 'evernote-thrift'
 
 class Evernote::EDAM::Type::Note
 
-  # Nokogiri SAX parser
-  class EnmlDocument < Nokogiri::XML::SAX::Document
+  # simple xhtml to txt converter
+  # just tries to convert evernotes simple xhtml. 
+  # the kind its own editors create. Which doesn't involve much nesting.
+  class EnmlDocument < Nokogiri::XML::SAX::Document # Nokogiri SAX parser
     
-    attr_accessor :txt
+    attr_accessor :_txt, :in_div, :in_pre
 
     def initialize
-      @txt = ''
+      @_txt = ''
+      @in_div = false
+      @in_pre = false
       super
     end
     
     def characters string
-      # Evernote seems to consider whitespace inside a div significant.
-      # but puts a newline after each div as well.
-      # I'm not sure what their intention is. But rather than include all these extra newlines (on top of the <br/>s)
-      # I cheap out and just remove any newlines I see in the content.
-      # unless its in a pre tag
-      @txt << string
+      
+      if ! self.in_div and ! self.in_pre and string == "\n"
+        # ignore lone newlines that occur outside a div
+      else
+        self._txt << string
+      end
     end
     
     def start_element name, attrs = []
-      if name == 'en-todo'
-        if Hash[attrs]['checked'] == 'true'
-          @txt << '[X]'
+      case name
+        when 'en-todo'
+          if Hash[attrs]['checked'] == 'true'
+            self._txt << '[X]'
+          else
+            self._txt << '[ ]'
+          end
+        when 'div'
+          self.in_div = true
+        when 'pre'
+          self.in_pre = true
         else
-          @txt << '[ ]'
-        end
+          # nothing
       end
+    end
+    
+    def end_element name
+      case name
+        when 'div'
+          self.in_div = false
+          # a newline for every div (whether its got a <br> in it or not)
+          self._txt << "\n"
+        when 'pre'
+          self.in_pre = false
+        when 'br'
+          # ignore it, as its always in a div, and every div will be a newline anyways
+        else
+          # nothing
+      end
+    end
+    
+    def txt
+      # always remove the last newline. to match up with WYSIWYG interfaces.
+      self._txt.chomp
     end
     
   end
@@ -70,7 +101,9 @@ class Evernote::EDAM::Type::Note
   def self.txt_to_enml(txt)
     raise 'given xml instead of txt' if txt.start_with? '<?xml'
     
-    # escape any angle brackets
+    # TODO create a proper DOM, with proper xml entity escapes and tag structure
+    
+    # escape any entities
     txt.gsub!('<','&lt;')
     txt.gsub!('>','&gt;')
     
@@ -78,31 +111,20 @@ class Evernote::EDAM::Type::Note
     txt.gsub!('[ ]','<en-todo checked="false"/>')
     txt.gsub!('[X]','<en-todo checked="true"/>')
     
-    # split by newlines, do the swap to div/br
-    # an empty string at the end of the split means there was a newline on the last real line.
+    # every newline becomes a <div></div>
+    # an empty line becomes a <div><br/></div>
+    
     lines = txt.split("\n",-1)
-    if txt == ""
-      # special case
-      lines = ['']
-    else
-      if lines.length == 0
-        raise
-      end
-    end
-    last_line = lines.pop
+    lines = [''] if txt == ''
+    raise if lines.length == 0
+    
     xhtml = lines.map { |string|
-      "<div>#{string}<br/></div>\n"
+      if string == ''
+        "<div><br/></div>\n"
+      else
+        "<div>#{string}</div>\n"
+      end
     }.join('')
-    if last_line == ""
-      # last real line in txt had a newline
-      # this was perofrmed by the map above
-      # our deed is done
-    else
-      # this is the last real line of txt
-      # and it has no newline
-      # so we must convert it specially
-      xhtml << "<div>#{last_line}</div>\n"
-    end
       
     <<EOF
 <?xml version='1.0' encoding='utf-8'?>
