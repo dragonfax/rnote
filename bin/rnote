@@ -46,9 +46,6 @@ on_error do |exception|
   elsif exception.instance_of?(Evernote::EDAM::Error::EDAMSystemException)
     puts exception.error_message
     true
-  elsif exception.class == Evernote::EDAM::Error::InvalidXmlError
-    puts exception.xml
-    true
   else
     true
   end

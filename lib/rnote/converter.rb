@@ -126,7 +126,7 @@ EOF
   def self.format_to_enml(format,formatted_content)
     case format
       when 'enml'
-        enml
+        formatted_content
       when 'txt'
         txt_to_enml(formatted_content)
       else
