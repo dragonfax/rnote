@@ -24,7 +24,6 @@ rescue LoadError
 end
 
 require 'rnote/version'
-require 'rnote/converter'
 require 'rnote/persister'
 require 'rnote/auth'
 

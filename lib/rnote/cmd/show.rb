@@ -1,5 +1,5 @@
 
-require 'rnote/find'
+require 'rnote/noun/note/find'
 
 include GLI::App
 

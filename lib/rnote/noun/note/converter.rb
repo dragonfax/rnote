@@ -1,7 +1,6 @@
 
 require 'nokogiri'
 require 'yaml'
-
 require 'evernote-thrift'
 
 

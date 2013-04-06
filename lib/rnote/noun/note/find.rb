@@ -1,7 +1,7 @@
 
 require 'highline/import'
 require 'evernote-thrift'
-require 'rnote/converter'
+require_relative 'converter'
 
 module Rnote
 

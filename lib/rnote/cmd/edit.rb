@@ -1,6 +1,6 @@
 
-require 'rnote/edit'
-require 'rnote/find'
+require 'rnote/noun/note/edit'
+require 'rnote/noun/note/find'
 
 include GLI::App
 

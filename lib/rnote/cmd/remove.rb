@@ -1,6 +1,6 @@
 
-require 'rnote/find'
 require 'highline/import'
+require 'rnote/noun/notefind'
 
 include GLI::App
 

@@ -2,6 +2,7 @@
 require 'highline'
 require 'nokogiri'
 require 'tempfile'
+require_relative 'converter'
 
 class WaitPidTimeout
   

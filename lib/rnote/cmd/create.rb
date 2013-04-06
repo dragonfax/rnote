@@ -1,7 +1,7 @@
 
 require 'gli'
 
-require 'rnote/edit'
+require 'rnote/noun/note/edit'
 
 include GLI::App
 
