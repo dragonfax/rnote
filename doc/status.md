@@ -47,10 +47,10 @@ What completed so far.
 <tr><th>find</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
 <tr><th>show</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
 <tr><th>edit</th>    <td>X</td>       <td>N/A</td>      <td>N/A</td> </tr>
-<tr><th>create</th>  <td>X</td>       <td></td>         <td></td> </tr>
-<tr><th>remove</th>  <td></td>        <td></td>         <td></td> </tr>
-<tr><th>rename</th>  <td></td>        <td></td>         <td></td> </tr>
-<tr><th>list</th>    <td></td>        <td></td>         <td></td> </tr>
+<tr><th>create</th>  <td>X</td>       <td></td>         <td>X</td> </tr>
+<tr><th>remove</th>  <td>X</td>       <td></td>         <td>X</td> </tr>
+<tr><th>rename</th>  <td></td>        <td></td>         <td>X</td> </tr>
+<tr><th>list</th>    <td></td>        <td></td>         <td>X</td> </tr>
 
 </table>
 
