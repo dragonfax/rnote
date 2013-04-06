@@ -2,6 +2,7 @@
 require 'gli'
 
 require 'rnote/noun/note/edit'
+require 'rnote/noun/tag/find'
 
 include GLI::App
 
@@ -32,7 +33,7 @@ command :create do |verb|
       tag_name = args[0]
       
       # verify tag doesn't exist
-      if ! $app.auth.client.note_store.listTags.select { |tag| tag.name.downcase == tag_name.downcase }.empty?
+      if Rnote::Tag.get_tag_by_name(tag_name)
         raise "tag #{tag_name} already exists"
       end
 

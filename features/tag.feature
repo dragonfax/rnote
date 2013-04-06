@@ -13,7 +13,14 @@ Feature:
     And the output should contain "blah1"
     And the output should contain "blah2"
     
-  # API can't delete tags, so we can't have automated tests creating tags
+  # API can't delete tags, so we can't have automated tests creating/deleting tags
+  #
+  #Scenario: Delete tag
+  #  Given that I have a tag names "blah1"
+  #  When I run `rnote delete tag blah1`
+  #  Then the exit status should be 0
+  #  And I should not have a tag named "blah1"
+  #
   #Scenario: Create tag
   #  Given that I don't have a tag named "blah1"
   #  When I run `rnote create tag blah1`

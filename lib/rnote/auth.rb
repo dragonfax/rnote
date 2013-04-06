@@ -118,6 +118,17 @@ module Rnote
     def is_logged_in
       @persister.get_user_token or @persister.get_developer_token
     end
+    
+    # how did we log in? Some features are only available with some login types.
+    def login_type
+      if @persister.get_user_token
+        :user_token
+      elsif @persister.get_developer_token
+        :developer_token
+      else
+        nil
+      end
+    end
 
     def who
       if is_logged_in
