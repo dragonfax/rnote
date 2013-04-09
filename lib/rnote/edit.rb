@@ -224,7 +224,7 @@ module Rnote
           when 'exit'
             raise "User cancelled due to lost content."
           when 'diff'
-            show_diff(@note.content,converted_content)
+            show_diff(@note.content,unconverted_content)
           else
             raise
         end

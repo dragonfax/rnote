@@ -58,6 +58,8 @@ class Evernote::EDAM::Type::Note
           self.in_div = true
         when 'pre'
           self.in_pre = true
+        when 'li'
+          self._txt << '* '
         else
           # nothing
       end
@@ -73,6 +75,8 @@ class Evernote::EDAM::Type::Note
           self.in_pre = false
         when 'br'
           # ignore it, as its always in a div, and every div will be a newline anyways
+        when 'li'
+          self._txt << "\n"
         else
           # nothing
       end
@@ -108,9 +112,11 @@ class Evernote::EDAM::Type::Note
     txt.gsub!('>','&gt;')
     
     # replace todo items 
-    txt.gsub!('[ ]','<en-todo checked="false"/>')
     txt.gsub!('[X]','<en-todo checked="true"/>')
-    
+    txt.gsub!('[ ]','<en-todo/>')
+
+    txt.gsub!(/^\* (.+)$/,'<li>\\1</li>')
+
     # every newline becomes a <div></div>
     # an empty line becomes a <div><br/></div>
     
@@ -127,9 +133,9 @@ class Evernote::EDAM::Type::Note
     }.join('')
       
     <<EOF
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note>
+<en-note style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">
 #{xhtml}</en-note>
 EOF
   end
