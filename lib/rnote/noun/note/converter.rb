@@ -49,9 +49,9 @@ class Evernote::EDAM::Type::Note
       case name
         when 'en-todo'
           if Hash[attrs]['checked'] == 'true'
-            self._txt << '[X]'
+            self._txt << '[X] '
           else
-            self._txt << '[ ]'
+            self._txt << '[ ] '
           end
         when 'div'
           self.in_div = true
@@ -107,8 +107,8 @@ class Evernote::EDAM::Type::Note
     txt.gsub!('>','&gt;')
     
     # replace todo items 
-    txt.gsub!('[ ]','<en-todo checked="false"/>')
-    txt.gsub!('[X]','<en-todo checked="true"/>')
+    txt.gsub!('[ ] ','<en-todo checked="false"/>')
+    txt.gsub!('[X] ','<en-todo checked="true"/>')
     
     # every newline becomes a <div></div>
     # an empty line becomes a <div><br/></div>
