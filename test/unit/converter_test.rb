@@ -1,6 +1,6 @@
 
 require 'minitest/autorun'
-require 'rnote/converter'
+require 'rnote/noun/note/converter'
 require 'nokogiri'
 
 module Rnote
@@ -148,6 +148,15 @@ EOF
         txt = "line 1\nline 2\nline 3\n\n"
         assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)))
       end
+      
+      it 'unordered list' do
+        txt = <<EOF
+* first item
+* second item
+not an item
+EOF
+        assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)))
+      end
 
       it 'pre tag is converted properly, but not preserved' do
         enml_with_pre = <<EOF
@@ -166,7 +175,6 @@ EOF
 <div>Here is some pre text</div>
 <div>  with some whitespace</div>
 <div>and some new lines</div>
-<div><br/></div>
 </en-note>
 EOF
         assert_equal(enml_without_pre, Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(enml_with_pre)))

@@ -27,12 +27,14 @@ class Evernote::EDAM::Type::Note
   # the kind its own editors create. Which doesn't involve much nesting.
   class EnmlDocument < Nokogiri::XML::SAX::Document # Nokogiri SAX parser
     
-    attr_accessor :_txt, :in_div, :in_pre
+    attr_accessor :in_div, :in_pre, :in_li
 
     def initialize
       @_txt = ''
       @in_div = false
       @in_pre = false
+      @in_li = false
+      @_li_txt = ''
       super
     end
     
@@ -40,8 +42,10 @@ class Evernote::EDAM::Type::Note
       
       if ! self.in_div and ! self.in_pre and string == "\n"
         # ignore lone newlines that occur outside a div
+      elsif self.in_li
+        self.add_txt(string)
       else
-        self._txt << string
+        self.add_txt(string)
       end
     end
     
@@ -49,14 +53,17 @@ class Evernote::EDAM::Type::Note
       case name
         when 'en-todo'
           if Hash[attrs]['checked'] == 'true'
-            self._txt << '[X]'
+            self.add_txt('[X]')
           else
-            self._txt << '[ ]'
+            self.add_txt('[ ]')
           end
         when 'div'
+          raise "already in a div" if self.in_div
           self.in_div = true
         when 'pre'
           self.in_pre = true
+        when 'li'
+          self.in_li = true
         else
           # nothing
       end
@@ -67,19 +74,31 @@ class Evernote::EDAM::Type::Note
         when 'div'
           self.in_div = false
           # a newline for every div (whether its got a <br> in it or not)
-          self._txt << "\n"
+          self.add_txt("\n")
         when 'pre'
           self.in_pre = false
         when 'br'
           # ignore it, as its always in a div, and every div will be a newline anyways
+        when 'li'
+          self.in_li = false
+          self.add_txt('* ' + @_li_txt)
+          @_li_txt = ''
         else
           # nothing
+      end
+    end
+      
+    def add_txt(string)
+      if self.in_li
+        @_li_txt << string
+      else
+        @_txt << string
       end
     end
     
     def txt
       # always remove the last newline. to match up with WYSIWYG interfaces.
-      self._txt.chomp
+      @_txt.chomp
     end
     
   end
@@ -109,6 +128,13 @@ class Evernote::EDAM::Type::Note
     # replace todo items 
     txt.gsub!('[ ]','<en-todo checked="false"/>')
     txt.gsub!('[X]','<en-todo checked="true"/>')
+
+    txt.gsub!(/^\* (.+)$/,"<ul><li>\\1</li></ul>\n")
+    txt.gsub!("</ul>\n<ul>",'')
+    
+    txt.gsub!(/^\d+\. (.+)$/,"<ol><li>\\1</li></ol>\n")
+    txt.gsub!("</ol>\n<ol>",'')
+    
     
     # every newline becomes a <div></div>
     # an empty line becomes a <div><br/></div>
