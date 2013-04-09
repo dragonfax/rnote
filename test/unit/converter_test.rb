@@ -1,6 +1,6 @@
 
 require 'minitest/autorun'
-require 'rnote/converter'
+require 'rnote/noun/note/converter'
 require 'nokogiri'
 
 module Rnote
@@ -166,7 +166,6 @@ EOF
 <div>Here is some pre text</div>
 <div>  with some whitespace</div>
 <div>and some new lines</div>
-<div><br/></div>
 </en-note>
 EOF
         assert_equal(enml_without_pre, Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(enml_with_pre)))
