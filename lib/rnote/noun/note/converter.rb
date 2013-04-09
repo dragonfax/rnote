@@ -27,16 +27,20 @@ class Evernote::EDAM::Type::Note
   # the kind its own editors create. Which doesn't involve much nesting.
   class EnmlDocument < Nokogiri::XML::SAX::Document # Nokogiri SAX parser
     
-    attr_accessor :_txt, :in_div, :in_pre, :in_ul, :in_ol, :next_number
+    attr_accessor :_txt, :nested_div_count, :in_pre, :in_ul, :in_ol, :next_number
 
     def initialize
       @_txt = ''
-      @in_div = false
       @in_pre = false
       @next_number = 1
       @in_ul = false
       @in_ol = false
+      @nested_div_count = 0
       super
+    end
+
+    def in_div
+      nested_div_count > 0
     end
     
     def characters string
@@ -57,7 +61,7 @@ class Evernote::EDAM::Type::Note
             self._txt << '[ ] '
           end
         when 'div'
-          self.in_div = true
+          self.nested_div_count += 1
         when 'pre'
           self.in_pre = true
         when 'ol'
@@ -81,7 +85,8 @@ class Evernote::EDAM::Type::Note
     def end_element name
       case name
         when 'div'
-          self.in_div = false
+          raise "unmatched <div> tags" if self.nested_div_count <= 0
+          self.nested_div_count -= 1
           # a newline for every div (whether its got a <br> in it or not)
           self._txt << "\n"
         when 'pre'
@@ -130,7 +135,7 @@ class Evernote::EDAM::Type::Note
     txt.gsub!('>','&gt;')
     
     # replace todo items 
-    txt.gsub!('[ ] ','<en-todo checked="false"/>')
+    txt.gsub!('[ ] ','<en-todo/>')
     txt.gsub!('[X] ','<en-todo checked="true"/>')
     
     # every newline becomes a <div></div>

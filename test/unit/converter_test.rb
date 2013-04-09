@@ -52,6 +52,43 @@ EOF
 EOF
       end
 
+      it 'nested divs with list items' do
+        txt = <<EOF
+1. ol item 1
+2. ol item 2
+
+also
+
+1. ol item 1
+* ul item 1
+* ul item 2
+2. ol item 1
+
+EOF
+
+        enml = <<EOF
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note>
+<div>
+<ol>
+<li>ol item 1<br/></li>
+<li>ol item 2</li>
+</ol>
+<div><b>also</b></div>
+<ol>
+<li>ol item 1<br/>
+* ul item 1
+* ul item 2
+<li>ol item 1</li>
+</ol>
+</div>
+</en-note>
+EOF
+
+        assert_equal txt,Evernote::EDAM::Type::Note.enml_to_txt(enml)
+      end
+
     end
 
     describe 'txt2enml' do
