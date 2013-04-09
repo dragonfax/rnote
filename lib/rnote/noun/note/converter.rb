@@ -27,12 +27,15 @@ class Evernote::EDAM::Type::Note
   # the kind its own editors create. Which doesn't involve much nesting.
   class EnmlDocument < Nokogiri::XML::SAX::Document # Nokogiri SAX parser
     
-    attr_accessor :_txt, :in_div, :in_pre
+    attr_accessor :_txt, :in_div, :in_pre, :in_ul, :in_ol, :next_number
 
     def initialize
       @_txt = ''
       @in_div = false
       @in_pre = false
+      @next_number = 1
+      @in_ul = false
+      @in_ol = false
       super
     end
     
@@ -57,6 +60,19 @@ class Evernote::EDAM::Type::Note
           self.in_div = true
         when 'pre'
           self.in_pre = true
+        when 'ol'
+          self.next_number = 1
+          self.in_ol = true
+        when 'ul'
+          self.next_number = 1
+          self.in_ul = true
+        when 'li'
+          if in_ol
+            self._txt << next_number.to_s + '. '
+            self.next_number += 1
+          elsif in_ul
+            self._txt << '* '
+          end
         else
           # nothing
       end
@@ -72,6 +88,13 @@ class Evernote::EDAM::Type::Note
           self.in_pre = false
         when 'br'
           # ignore it, as its always in a div, and every div will be a newline anyways
+        when 'ul'
+          self.in_ul = false
+        when 'ol'
+          self.in_ol = false
+        when 'li'
+          # unnecessary, as we're in a div, so the other \n is kept
+          # self._txt << "\n"
         else
           # nothing
       end
