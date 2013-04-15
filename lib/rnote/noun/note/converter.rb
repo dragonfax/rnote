@@ -131,12 +131,12 @@ class Evernote::EDAM::Type::Note
     # TODO create a proper DOM, with proper xml entity escapes and tag structure
     
     # escape any entities
-    txt.gsub!('<','&lt;')
-    txt.gsub!('>','&gt;')
+    txt = txt.gsub('<','&lt;')
+    txt = txt.gsub('>','&gt;')
     
     # replace todo items 
-    txt.gsub!('[ ] ','<en-todo/>')
-    txt.gsub!('[X] ','<en-todo checked="true"/>')
+    txt = txt.gsub('[ ] ','<en-todo/>')
+    txt = txt.gsub('[X] ','<en-todo checked="true"/>')
     
     # every newline becomes a <div></div>
     # an empty line becomes a <div><br/></div>
@@ -185,6 +185,10 @@ EOF
   
   def txt_content
     self.class.enml_to_format('txt',self.content)
+  end
+  
+  def txt_content=(txt)
+    self.content = self.class.format_to_enml('txt', txt)
   end
   
   # The yaml stream is what we give to the user to edit in their editor
