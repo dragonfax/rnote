@@ -1,9 +1,13 @@
 require 'test/unit'
 
-# Add test libraries you want to use here, e.g. mocha
-
-class Test::Unit::TestCase
-
-  # Add global extensions to the test case class here
+class String
   
+  # useful for indenting heredocs in tests
+  def unindent
+    smallest_indent = scan(/^[ \t]*(?=\S)/).min # should be nil
+    indent_size = smallest_indent ? smallest_indent.size : 0
+    gsub(/^[ \t]{#{indent_size}}/, '')
+  end
 end
+
+
