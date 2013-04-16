@@ -21,6 +21,14 @@ require 'evernote-thrift'
 # the note attributes get its own class and thats where we stick the conversion routines.
 
 class Evernote::EDAM::Type::Note
+  
+  NON_BREAKING_SPACE = "\xc2\xa0".force_encoding("UTF-8")
+  
+  ENML_PREAMBLE = <<EOF
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">
+EOF
 
   # simple xhtml to txt converter
   # just tries to convert evernotes simple xhtml. 
@@ -140,10 +148,14 @@ class Evernote::EDAM::Type::Note
     
     # every newline becomes a <div></div>
     # an empty line becomes a <div><br/></div>
+    txt = txt.gsub('  ',NON_BREAKING_SPACE + ' ')
     
     lines = txt.split("\n",-1)
     lines = [''] if txt == ''
     raise if lines.length == 0
+    
+    # every pair of spaces must be swaped to a nbsp
+    # don't have to use the identity though. the utf-8 char is fine
     
     xhtml = lines.map { |string|
       if string == ''
@@ -153,12 +165,7 @@ class Evernote::EDAM::Type::Note
       end
     }.join('')
       
-    <<EOF
-<?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-<en-note>
-#{xhtml}</en-note>
-EOF
+    "#{Evernote::EDAM::Type::Note::ENML_PREAMBLE}#{xhtml}</en-note>\n"
   end
   
   def self.enml_to_format(format,enml)

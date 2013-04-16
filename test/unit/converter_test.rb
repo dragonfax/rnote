@@ -91,7 +91,7 @@ module Rnote
       # this is the conversion which has to be perfect. nothing lost or gained.
       
       def assert_txt_converted(txt)
-        assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)))
+        assert_equal(txt, Evernote::EDAM::Type::Note.enml_to_txt(Evernote::EDAM::Type::Note.txt_to_enml(txt)).replace_nbsp)
       end
 
       it 'passes through simple text (txt), with no markup' do
@@ -149,6 +149,21 @@ module Rnote
         txt = "line 1\nline 2\nline 3\n\n"
         assert_txt_converted(txt)
       end
+      
+      it 'multiple lines with varying indent' do
+        txt = <<-EOF.unindent
+        
+          first line, will seem unindented
+
+            second line, is indented one tab
+
+              third line, is indented two tabs
+
+          fourth line, is not indented at all.
+
+        EOF
+        assert_txt_converted(txt)
+      end
 
 
     end
@@ -158,25 +173,19 @@ module Rnote
       # this pre tag is how we used to do formating.
       # may crop up againt, too
       it 'pre tag, converted but not preserved' do
-        enml_with_pre = <<-EOF.unindent
-          <?xml version='1.0' encoding='utf-8'?>
-          <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-          <en-note>
+        enml_with_pre = Evernote::EDAM::Type::Note::ENML_PREAMBLE + <<-EOF.unindent
           <pre>Here is some pre text
             with some whitespace
           and some new lines
           </pre></en-note>
         EOF
-        enml_without_pre = <<-EOF.unindent
-          <?xml version='1.0' encoding='utf-8'?>
-          <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
-          <en-note>
+        enml_without_pre = Evernote::EDAM::Type::Note::ENML_PREAMBLE + <<-EOF.unindent
           <div>Here is some pre text</div>
           <div>  with some whitespace</div>
           <div>and some new lines</div>
           </en-note>
         EOF
-        assert_equal(enml_without_pre, Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(enml_with_pre)))
+        assert_equal(enml_without_pre, Evernote::EDAM::Type::Note.txt_to_enml(Evernote::EDAM::Type::Note.enml_to_txt(enml_with_pre)).replace_nbsp)
       end
       
       it 'extracts text from a <pre> tag' do
