@@ -28,7 +28,7 @@ spec = Gem::Specification.new do |s|
 
   s.add_runtime_dependency('gli','2.5.4')
 	s.add_runtime_dependency('evernote-thrift')
-	s.add_runtime_dependency('evernote_oauth','~>0.1.8')
+	s.add_runtime_dependency('evernote_oauth')
   s.add_runtime_dependency('mechanize')
   s.add_runtime_dependency('nokogiri')
   s.add_runtime_dependency('highline')
